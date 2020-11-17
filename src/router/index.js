@@ -3,18 +3,21 @@
 // 导入刚才编写的组件
 
 import Login from '../components/Login.vue'
-
+import {Message} from 'element-ui'
 Vue.use(VueRouter)
 
-export default new VueRouter({
+const router = new VueRouter({
   routes: [
-  // 下面都是固定的写法
+    {
+      path:'/',
+      redirect:'/home'
+    },
     {
       path: '/login',
       name: 'Login',
       component: Login,
       meta:{
-        title: '登录/注册'
+        title: 'SCUT Commercial Website'
       }
     },
     {
@@ -35,18 +38,60 @@ export default new VueRouter({
           meta:{auth: true},
         },
         {
-          path:'/library',
-          name:'Library',
-          component:resolve=>require(['../components/Library'],resolve),
+          path:'/market',
+          name:'Market',
+          component:resolve=>require(['../components/Market'],resolve),
           meta:{auth:true}
         },
         {
-          path:'user',
+          path:'/user',
           name:'User',
           component:resolve=>require(['../components/User'],resolve),
-          meta:{auth:true}
+          meta:{auth:true},
+          children:[
+            {path:'/user/info',component:resolve=>require(['../components/user/info'],resolve)},
+            {path:'/user/pwd',component:resolve=>require(['../components/user/pwd'],resolve)}
+          ]
         }
       ]
+    },
+    {
+      path: '/404',
+      name: 'notFound',
+      component:resolve=>require(['../components/common/404'],resolve),
+    }, 
+    {
+      path: '*',
+      redirect: '/404'
     }
   ]
 })
+
+
+router.beforeEach((to, form, next) => {
+  
+  let flag = sessionStorage.getItem("user")
+  if (to.meta.auth) {
+    if(!flag)
+    {
+      Message({
+      showClose: true,
+      message: '请先登录',
+      type: 'warning'
+    });
+    next({ path: '/login' });
+    }
+    else next();
+  } 
+  else if(to.path=='/login' && flag){
+    Message({
+      showClose: true,
+      message: '您已登录，若想退出当前用户请点击注销！',
+      type: 'warning'
+    });
+  }
+  else next();
+});
+
+export default router
+

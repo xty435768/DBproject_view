@@ -22,11 +22,12 @@
         name: 'NavMenu',
         data () {
             return {
+                
                 navList: [
                     {name: '/index', navItem: '首页'},
                     // {name: '/jotter', navItem: '笔记本'},
-                    {name: '/library', navItem: '图书馆'},
-                    {name: '/user', navItem: '个人中心'}
+                    {name: '/market', navItem: '校园商城'},
+                    {name: '/user/info', navItem: '个人中心'}
                 ]
             }
         },
@@ -36,6 +37,7 @@
                 let date = new Date();
                 date.setTime(date.getTime()+(0));
                 document.cookie="user="+";"+"expires="+date.toUTCString();
+                window.sessionStorage.removeItem('user')
                 this.$router.replace({path: '/login'});
                 this.$message({
                     showClose:true,

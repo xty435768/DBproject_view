@@ -15,7 +15,7 @@
                   auto-complete="off" placeholder="密码"></el-input>
         </el-form-item>
         <el-form-item style="width: 100%">
-        <el-checkbox v-model="remember_me" class="remember_me_style">记住我</el-checkbox>
+        <el-checkbox v-model="remember_me" class="remember_me_style" v-show="false">记住我</el-checkbox>
         <el-button type="primary" class="login_button_style" v-on:click="login">登录</el-button>
         </el-form-item>
       </el-tab-pane>
@@ -216,6 +216,9 @@
     },
     methods: {
       login () {
+        window.sessionStorage.setItem('user',this.loginForm.username) 
+        this.$router.replace({path: '/home'})
+        return
         alert("haha")
         this.$axios
           .post('/login', {
@@ -361,7 +364,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   #poster {
     background:url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1602591084969&di=4d48c247ed1f1b1a8ea4cb72979e2df4&imgtype=0&src=http%3A%2F%2Fyouimg1.c-ctrip.com%2Ftarget%2Ftg%2F646%2F311%2F178%2Fe2a0d127977b4e5b9c4094cbeb80c253.jpg") no-repeat;
     background-position: center;
@@ -369,6 +372,8 @@
     width: 100%;
     background-size: cover;
     position: fixed;
+    left: 0px;
+    top: 0px;
   }
   #app{
     text-align:left;
@@ -413,6 +418,7 @@
     background: #313538;
     width: 100%;
     border: none;
+    margin-top:20px;
   }
   .remember_me_style{
     margin: 5px auto 5px auto;

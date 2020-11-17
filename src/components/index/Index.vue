@@ -2,6 +2,7 @@
   <div>
     Index Test
     <el-button @click="handleClick">download test</el-button>
+    
   </div>
 </template>
 <script>
@@ -11,6 +12,9 @@ export default {
     return {
 
     }
+  },
+  mounted(){
+      
   },
   methods: {
     handleClick () {
@@ -52,7 +56,8 @@ export default {
 
     //       console.log(err);
     //     })
-    }
+    },
+    
   }
 
 }

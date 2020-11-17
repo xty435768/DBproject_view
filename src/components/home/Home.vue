@@ -8,7 +8,7 @@
 <script>
     import NavMenu from './NaviMenu'
     export default {
-        components: {NavMenu}
+        components: {NavMenu},
     }
 </script>
 
