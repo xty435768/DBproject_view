@@ -7,7 +7,9 @@ import router from './router'
 Vue.prototype.$axios = axios
 axios.defaults.baseURL='/api'
 Vue.config.productionTip = false
-
+import VueBus from 'vue-bus';
+ 
+Vue.use(VueBus);
 //Vue.use(ElementUI)
 
 new Vue({
