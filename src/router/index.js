@@ -62,6 +62,14 @@ const router = new VueRouter({
       ]
     },
     {
+      path: '/admin',
+      name: 'Admin',
+      component:resolve=>require(['../components/Admin'],resolve),
+      children:[
+        {path:'/admin/items',component:resolve=>require(['../components/admin/manageItem'],resolve)},
+      ]
+    },
+    {
       path: '/404',
       name: 'notFound',
       component:resolve=>require(['../components/common/404'],resolve),

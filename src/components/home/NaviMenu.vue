@@ -28,6 +28,7 @@
                     // {name: '/jotter', navItem: '笔记本'},
                     {name: '/market', navItem: '校园商城'},
                     {name: '/user/info', navItem: '个人中心'}
+                    //{name; '/user/info',}
                 ]
             }
         },
