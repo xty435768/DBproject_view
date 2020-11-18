@@ -1,8 +1,9 @@
 <template>
   <div>
-    Index Test
-    <el-button @click="handleClick">download test</el-button>
-    <!-- <img src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3677276808,1172195623&fm=26&gp=0.jpg"> -->
+    <!-- Index Test
+    <el-button @click="handleClick">download test</el-button> -->
+    <img src="http://news.scut.edu.cn/_upload/article/images/a4/4f/6b7b6ed94826aa7a1dc329dfcfbe/2103eadb-6935-4e75-9997-5c7cbf5f1bf3.jpg" 
+    height="90%" width="90%">
   </div>
 </template>
 <script>

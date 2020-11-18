@@ -33,10 +33,10 @@
         </div></el-col>
         </el-row> -->
         <h3 class="login_title">注册</h3>
-        <el-steps :active="active" finish-status="success" style="margin-bottom:20px">
+        <el-steps :active="active" finish-status="success" style="margin-bottom:20px" align-center>
           <el-step title="填写基本信息"></el-step>
           <el-step title="设置密码"></el-step>
-          <el-step title="步骤 3"></el-step>
+          <el-step title="填写附加信息"></el-step>
         </el-steps>
         <div v-if="active == 0">
           <el-form label-width="80px" :rules="basic_info_rules" :model="basicSignUpForm" ref="basicSignUpForm">
