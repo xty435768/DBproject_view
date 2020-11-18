@@ -1,7 +1,7 @@
 <template>
-  <el-container>
-    <div>
-        <el-row style="height: 840px;">
+  <!-- <el-container style="text-align:center;"> -->
+    <div >
+        <el-row style="height: 550px;margin: 40px 40px auto 40px">
             <!-- <search-bar @onSearch="searchResult" ref="searchBar"></search-bar> -->
             <el-tooltip effect="dark" placement="right"
                         v-for="item in books.slice((currentPage-1)*pageSize,currentPage*pageSize)"
@@ -16,7 +16,7 @@
                 <el-card style="width: 135px;margin-bottom: 20px;height: 233px;float: left;margin-right: 15px" class="book"
                          bodyStyle="padding:10px" shadow="hover">
                     <router-link target="_blank" :to="{
-                    name:BookMsg,
+                    path:'/itemDetail',
                     query:{
                     title:item.title,
                     cover:item.cover,
@@ -35,6 +35,7 @@
                     img_4:item.img_4,
                     img_5:item.img_5,
                     }}" class="cover" @click.native="sendBookMsg(item)">
+                    <!-- <router-link to="/itemDetail"> -->
                         <img :src="item.cover" alt="封面">
                     </router-link>
                     <div class="info">
@@ -55,7 +56,7 @@
             </el-pagination>
         </el-row>
     </div>
-  </el-container>
+  <!-- </el-container> -->
 </template>
 
 <script>
@@ -72,9 +73,35 @@
                 currentPage: 1,
                 pageSize: 18,
                 BookMsg:'BookMsg',
-                temp_data: '[{"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                temp_data: '[ \
+                    {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
                 {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
-                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}]'
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
+                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
+                {"id":41,"cover":"http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg","title":"啊手动阀手动阀手动阀","author":"啊手动阀手动阀手动阀","date":"2021","price":"444","newOld":"八成新","contact":"哈哈哈","phone":"222","qq":"333","weChat":"444","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"555","cid":"4","uid":"-5"}, \
+                ]'
             }
         },
         //挂载数据后执行

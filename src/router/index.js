@@ -21,6 +21,11 @@ const router = new VueRouter({
       }
     },
     {
+      path: '/itemDetail',
+      name: 'itemDetail',
+      component:resolve=>require(['../components/ItemDetail'],resolve),
+    },
+    {
       path: '/home',
       name: 'Home',
       redirect: '/index',
@@ -50,7 +55,8 @@ const router = new VueRouter({
           meta:{auth:true},
           children:[
             {path:'/user/info',component:resolve=>require(['../components/user/info'],resolve)},
-            {path:'/user/pwd',component:resolve=>require(['../components/user/pwd'],resolve)}
+            {path:'/user/pwd',component:resolve=>require(['../components/user/pwd'],resolve)},
+            {path:'/user/items',component:resolve=>require(['../components/user/items'],resolve)}
           ]
         }
       ]

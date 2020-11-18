@@ -18,6 +18,7 @@
           router
         >
           <el-menu-item index="/user/info">个人信息</el-menu-item>
+          <el-menu-item index="/user/items">我发布的商品</el-menu-item>
           <el-menu-item style="left: 0px;" index="/user/pwd">密码修改</el-menu-item>
         </el-menu>
       </el-col>
