@@ -58,7 +58,8 @@ const router = new VueRouter({
             {path:'/user/pwd',component:resolve=>require(['../components/user/pwd'],resolve)},
             {path:'/user/items',component:resolve=>require(['../components/user/items'],resolve)},
             {path:'/user/orders',component:resolve=>require(['../components/user/orders'],resolve)},
-            {path:'/user/cart',component:resolve=>require(['../components/user/cart'],resolve)}
+            {path:'/user/cart',component:resolve=>require(['../components/user/cart'],resolve)},
+            {path:'/user/selling',component:resolve=>require(['../components/user/selling'],resolve)}
           ]
         }
       ]

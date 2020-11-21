@@ -1,5 +1,5 @@
 {
-  "name": "element-starter",
+  "name": "scut_commercial_website",
   "description": "A Vue.js project",
   "author": "yi.shyang@ele.me",
   "private": true,
@@ -11,7 +11,7 @@
     "axios": "^0.20.0",
     "element-ui": "^2.3.4",
     "sass": "^1.27.0",
-    "sass-loader": "^10.0.3",
+    "sass-loader": "^7.3.0",
     "vue": "^2.5.16",
     "vue-bus": "^1.2.1",
     "vue-puzzle-vcode": "^1.1.4",

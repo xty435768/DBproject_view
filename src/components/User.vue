@@ -18,9 +18,10 @@
           router
         >
           <el-menu-item index="/user/info">个人信息</el-menu-item>
-          <el-menu-item index="/user/cart">心愿单</el-menu-item>
+          <el-menu-item index="/user/cart">购物车</el-menu-item>
           <el-menu-item index="/user/orders">我的订单</el-menu-item>
           <el-menu-item index="/user/items">我发布的商品</el-menu-item>
+          <el-menu-item index="/user/selling">我卖出的商品</el-menu-item>
           <el-menu-item style="left: 0px;" index="/user/pwd">密码修改</el-menu-item>
         </el-menu>
       </el-col>
