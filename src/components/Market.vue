@@ -38,10 +38,11 @@
                     <!-- <router-link to="/itemDetail"> -->
                         <img :src="item.cover" alt="封面">
                     </router-link>
-                    <div class="info">
+                    <div class="info" style="text-align: left;">
                         <div class="title">
-                            <a href="">{{item.title}}</a>
+                            <a :href="'/#/ItemDetail?title='+item.title">{{item.title}}</a> 
                         </div>
+                        <!-- <el-button type="text" style="height:30px;">{{item.title}}</el-button> -->
                     </div>
                     <div class="author" style="color: #ee231e;">{{item.price}}元 </div>
                 </el-card>

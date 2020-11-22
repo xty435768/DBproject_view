@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-upload
-        action="api/imgUpload"
+        action="api/api/uploadImg"
         list-type="picture-card"
         accept="image/*"
         :limit="imgLimit"
@@ -18,6 +18,7 @@
       <el-dialog :visible.sync="dialogVisible">
         <img width="100%" :src="dialogImageUrl" alt="">
       </el-dialog>
+      <el-button @click="printFileList">打印FileList</el-button>
     </div>
 </template>
 
@@ -30,12 +31,18 @@ export default {
         dialogVisible: false,
         productImgs: [],
         isMultiple: true,
-        imgLimit: 6
+        imgLimit: 3
       }
+    },
+    update() {
+      this.productImgs[0] = { name: "123.jpg" ,url: "http://125.216.249.215:45678/api/file/SXcKoicKlwjfif.jpg" };
     },
     methods: {
       handleRemove(file, fileList) {//移除图片
         console.log(file, fileList);
+      },
+      printFileList() {
+        console.log(this.productImgs);
       },
       handlePictureCardPreview(file) {//预览图片时调用
         console.log(file);
@@ -58,9 +65,11 @@ export default {
         //return isJPG && isLt2M;
         return true;
       },
-      handleAvatarSuccess(res, file) {//图片上传成功
+      handleAvatarSuccess(res, file, fileList) {//图片上传成功
         console.log(res);
         console.log(file);
+        console.log('成功的FileList: ',fileList)
+        console.log('list: ',this.productImgs)
         this.imageUrl = URL.createObjectURL(file.raw);
       },
       handleExceed(files, fileList) {//图片上传超过数量限制

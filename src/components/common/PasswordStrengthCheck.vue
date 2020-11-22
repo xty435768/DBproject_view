@@ -34,6 +34,7 @@
         },
         watch:{
             password(newValue){
+                //console.log(this.globalColors.color)
                 const mode = this.checkPasswordStrength(newValue);
                 //逻辑处理
                 switch (mode) {
@@ -100,6 +101,7 @@
             ThreeFormat() {
                 return "";
             },
+            
             //密码强度验证
             checkPasswordStrength(value) {
                 let mode = 0;
@@ -114,7 +116,7 @@
     }
 </script>
  
-<style>
+<style scope>
     .el-progress__text {
         display: none;
     }
@@ -122,4 +124,5 @@
         padding-right: 0px;
         margin: 0px;
     }
+    
 </style>

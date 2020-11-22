@@ -8,7 +8,7 @@
         <h3 class="login_title">登录</h3>
         <el-form-item>
         <el-input type="text" v-model="loginForm.username"
-                  auto-complete="off" placeholder="账号" class="username_style"></el-input>
+                  auto-complete="off" placeholder="学号/教职工号" class="username_style"></el-input>
         </el-form-item>
         <el-form-item>
         <el-input type="password" v-model="loginForm.password"
@@ -16,6 +16,8 @@
         </el-form-item>
         <el-form-item style="width: 100%">
         <el-checkbox v-model="remember_me" class="remember_me_style" v-show="false">记住我</el-checkbox>
+        <el-radio v-model="login_type" label="user">普通用户</el-radio>
+        <el-radio v-model="login_type" label="admin">管理员用户</el-radio>
         <el-button type="primary" class="login_button_style" v-on:click="login">登录</el-button>
         </el-form-item>
       </el-tab-pane>
@@ -33,10 +35,10 @@
         </div></el-col>
         </el-row> -->
         <h3 class="login_title">注册</h3>
-        <el-steps :active="active" finish-status="success" style="margin-bottom:20px">
+        <el-steps :active="active" finish-status="success" style="margin-bottom:20px" align-center>
           <el-step title="填写基本信息"></el-step>
           <el-step title="设置密码"></el-step>
-          <el-step title="步骤 3"></el-step>
+          <el-step title="填写附加信息"></el-step>
         </el-steps>
         <div v-if="active == 0">
           <el-form label-width="80px" :rules="basic_info_rules" :model="basicSignUpForm" ref="basicSignUpForm">
@@ -86,8 +88,8 @@
                 <el-input v-model="additionForm.name" placeholder="使用昵称能让其他用户更方便地记住你"></el-input>
               </el-form-item>
               <el-form-item label="性别" class="input_style">
-                <el-radio v-model="additionForm.sex" label="'male'">男</el-radio>
-                <el-radio v-model="additionForm.sex" label="'female'">女</el-radio>
+                <el-radio v-model="additionForm.sex" label="male">男</el-radio>
+                <el-radio v-model="additionForm.sex" label="female">女</el-radio>
               </el-form-item>
               <el-form-item label="专业" class="input_style">
                 <el-input v-model="additionForm.major"></el-input>
@@ -100,7 +102,9 @@
               </el-form-item>
             </el-form>
         </div>
+        
         <el-button style="margin-top: 12px;float: right;" @click="next">{{nextButtonText}}</el-button>
+        <el-button style="margin-top: 12px;margin-right: 20px;float: right;" @click="active--" :disabled="active!=1">上一步</el-button>
       </el-tab-pane>
     </el-tabs>
   </el-form>
@@ -125,6 +129,7 @@
         activeName:"sign_in",
         remember_me:false,
         nextButtonText:'下一步',
+        login_type:'user',
 
         active_style: true,
         active:0,
@@ -216,19 +221,28 @@
     },
     methods: {
       login () {
-        window.sessionStorage.setItem('user',this.loginForm.username) 
-        this.$router.replace({path: '/home'})
-        return
-        alert("haha")
+        // window.sessionStorage.setItem('user',this.loginForm.username) 
+        // this.$router.replace({path: '/home'})
+        // return
+        var post_address = this.login_type=='user'?'/login/student':'/login/admin';
         this.$axios
-          .post('/login', {
-            "userName": this.loginForm.username,
+          .post(post_address, 
+            this.login_type=='user'?
+          {
+            "studentID": this.loginForm.username,
+            "password": this.loginForm.password
+          }
+          :
+          {
+            "adminID": this.loginForm.username,
             "password": this.loginForm.password
           })
           .then(successResponse => {
-            if (successResponse.status === 200) {
-              this.$message({message:'登录成功！即将跳转到主页！',type:'success',center:true,showClose:true})
-              this.$router.replace({path: '/index'})
+            if (eval(successResponse.data)['is_success'] === 'true') {
+              this.$message({message:'登录成功！',type:'success',center:true,showClose:true})
+              window.sessionStorage.setItem('user',this.loginForm.username) 
+              window.sessionStorage.setItem('user_type',this.login_type) 
+              this.$router.replace({path: '/home'})
             }
             else
             {
@@ -243,19 +257,18 @@
         if(this.active == 0)
         {
           if(this.submitFormCheck('basicSignUpForm')) {
-            this.$axios.post('/register/stage1', this.basicSignUpForm)
+            this.$axios.post('/common/sms_verify', {verify_code:this.basicSignUpForm.verify_code})
               .then(successResponse => {
                 if (successResponse.data === 'OK') {
                   this.active++;
                 }
                 else
                 {
-                  this.$notify.error({title:'注册失败！',message: successResponse.data})
-                  //console.log(successResponse)
+                  this.$notify.error({title:'手机验证失败！',message: successResponse.data})
                 }
               })
             .catch(failResponse => {
-            this.$notify.error({title: 'Stage1 failed！',message: failResponse.data});
+            this.$notify.error({title: '手机验证失败',message: failResponse.data});
             })
             
           }
@@ -263,13 +276,54 @@
         else if(this.active == 1)
         {
           if(this.submitFormCheck('passwordForm')) {
-            this.active++;
-            this.nextButtonText='提交';
+            this.$axios.post('/register', 
+            {
+              studentID:this.basicSignUpForm.id,
+              password:this.passwordForm.password,
+              mobile:this.basicSignUpForm.mobile,
+              college:this.basicSignUpForm.department,
+            })
+              .then(successResponse => {
+                if (eval(successResponse.data)['is_success'] === 'true') {
+                  this.active++;
+                  this.nextButtonText='提交';
+                }
+                else
+                {
+                  this.$notify.error({title:'注册失败！',message: eval(successResponse.data)['description']})
+                }
+              })
+            .catch(failResponse => {
+            this.$notify.error({title: '注册失败',message: failResponse.data});
+            })            
           }
         }
         else
         {
-          console.log(this.additionForm.sex)
+          this.$axios.post('/user_info/set', 
+            {
+              studentID:this.basicSignUpForm.id,
+              name:this.additionForm.name,
+              sex:this.additionForm.sex,
+              mobile:this.basicSignUpForm.mobile,
+              college:this.basicSignUpForm.department,
+              dormitory:this.additionForm.dormitory,
+              qq:this.additionForm.qq_number,
+              major:this.additionForm.major,              
+            })
+              .then(successResponse => {
+                if (eval(successResponse.data)['is_success'] === 'true') {
+                  this.$message({message: '注册成功！',type: 'success',center:true})
+                  this.$router.replace({path: '/login'})
+                }
+                else
+                {
+                  this.$notify.error({title:'注册失败！',message: eval(successResponse.data)['description']})
+                }
+              })
+            .catch(failResponse => {
+            this.$notify.error({title: '注册失败',message: failResponse.data});
+            })
         }
         //if(this.active == 0)this.vcode_isShow = true;
         
@@ -304,7 +358,7 @@
             this.$notify.error({title: '发送异常！',message: failResponse.data});
           })
 
-        this.time = 60;
+        this.time = 6;
         this.disabled = true;
         this.timer();
       },
@@ -314,7 +368,7 @@
 
       //验证码模块函数
       sendcode() {
-        const reg = 11 && /^((13|14|15|17|18)[0-9]{1}\d{8})$/
+        const reg = 11 && /^((13|14|15|17|18|19)[0-9]{1}\d{8})$/
         if (this.basicSignUpForm.mobile == '') {
             this.$message({
                 type:'error',

@@ -79,7 +79,8 @@ module.exports = (options = {}) => ({
     // },
     proxy: {
       '/api': {
-          target: 'http://125.216.249.215:45678/',
+          //target: 'http://125.216.249.215:45678/',
+          target: 'http://127.0.0.1:12140/',
           // 允许跨域
           changeOrigin: true,
           ws: true,
