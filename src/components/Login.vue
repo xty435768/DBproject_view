@@ -116,6 +116,7 @@
   import Vcode from 'vue-puzzle-vcode';
   import PasswordStrength from "./common/PasswordStrengthCheck";
   import UploadPicture from "./common/UploadPicture";
+  import {department_options} from "../assets/constants.js"
   export default {
     name: 'Login',
     components: { Vcode, PasswordStrength, UploadPicture},
@@ -180,43 +181,44 @@
         disabled: false,
         time: 0,
         btntxt: "重新发送",
+        department_options: department_options
 
-        department_options:[
-          {value:'机械与汽车工程学院',label:'机械与汽车工程学院'},
-          {value:'建筑学院',label:'建筑学院'},
-          {value:'土木与交通学院',label:'土木与交通学院'},
-          {value:'电子与信息学院',label:'电子与信息学院'},
-          {value:'材料科学与工程学院（先进材料国际化示范学院）',label:'材料科学与工程学院（先进材料国际化示范学院）'},
-          {value:'化学与化工学院',label:'化学与化工学院'},
-          {value:'轻工科学与工程学院',label:'轻工科学与工程学院'},
-          {value:'食品科学与工程学院',label:'食品科学与工程学院'},
-          {value:'数学学院',label:'数学学院'},
-          {value:'物理与光电学院',label:'物理与光电学院'},
-          {value:'经济与金融学院',label:'经济与金融学院'},
-          {value:'旅游管理系',label:'旅游管理系'},
-          {value:'电子商务系',label:'电子商务系'},
-          {value:'自动化科学与工程学院',label:'自动化科学与工程学院'},
-          {value:'计算机科学与工程学院',label:'计算机科学与工程学院'},
-          {value:'电力学院',label:'电力学院'},
-          {value:'生物科学与工程学院',label:'生物科学与工程学院'},
-          {value:'环境与能源学院',label:'环境与能源学院'},
-          {value:'软件学院',label:'软件学院'},
-          {value:'工商管理学院（创业教育学院）',label:'工商管理学院（创业教育学院）'},
-          {value:'公共管理学院',label:'公共管理学院'},
-          {value:'马克思主义学院',label:'马克思主义学院'},
-          {value:'外国语学院',label:'外国语学院'},
-          {value:'法学院（知识产权学院）',label:'法学院（知识产权学院）'},
-          {value:'新闻与传播学院',label:'新闻与传播学院'},
-          {value:'艺术学院',label:'艺术学院'},
-          {value:'体育学院',label:'体育学院'},
-          {value:'设计学院',label:'设计学院'},
-          {value:'医学院（生命科学研究院）',label:'医学院（生命科学研究院）'},
-          {value:'国际教育学院',label:'国际教育学院'},
-          {value:'生物医学科学与工程学院',label:'生物医学科学与工程学院'},
-          {value:'吴贤铭智能工程学院',label:'吴贤铭智能工程学院'},
-          {value:'分子科学与工程学院（华南软物质科学与技术高等研究院）',label:'分子科学与工程学院（华南软物质科学与技术高等研究院 ）'},
-          {value:'微电子学院',label:'微电子学院'}
-        ]
+        // department_options:[
+        //   {value:'机械与汽车工程学院',label:'机械与汽车工程学院'},
+        //   {value:'建筑学院',label:'建筑学院'},
+        //   {value:'土木与交通学院',label:'土木与交通学院'},
+        //   {value:'电子与信息学院',label:'电子与信息学院'},
+        //   {value:'材料科学与工程学院（先进材料国际化示范学院）',label:'材料科学与工程学院（先进材料国际化示范学院）'},
+        //   {value:'化学与化工学院',label:'化学与化工学院'},
+        //   {value:'轻工科学与工程学院',label:'轻工科学与工程学院'},
+        //   {value:'食品科学与工程学院',label:'食品科学与工程学院'},
+        //   {value:'数学学院',label:'数学学院'},
+        //   {value:'物理与光电学院',label:'物理与光电学院'},
+        //   {value:'经济与金融学院',label:'经济与金融学院'},
+        //   {value:'旅游管理系',label:'旅游管理系'},
+        //   {value:'电子商务系',label:'电子商务系'},
+        //   {value:'自动化科学与工程学院',label:'自动化科学与工程学院'},
+        //   {value:'计算机科学与工程学院',label:'计算机科学与工程学院'},
+        //   {value:'电力学院',label:'电力学院'},
+        //   {value:'生物科学与工程学院',label:'生物科学与工程学院'},
+        //   {value:'环境与能源学院',label:'环境与能源学院'},
+        //   {value:'软件学院',label:'软件学院'},
+        //   {value:'工商管理学院（创业教育学院）',label:'工商管理学院（创业教育学院）'},
+        //   {value:'公共管理学院',label:'公共管理学院'},
+        //   {value:'马克思主义学院',label:'马克思主义学院'},
+        //   {value:'外国语学院',label:'外国语学院'},
+        //   {value:'法学院（知识产权学院）',label:'法学院（知识产权学院）'},
+        //   {value:'新闻与传播学院',label:'新闻与传播学院'},
+        //   {value:'艺术学院',label:'艺术学院'},
+        //   {value:'体育学院',label:'体育学院'},
+        //   {value:'设计学院',label:'设计学院'},
+        //   {value:'医学院（生命科学研究院）',label:'医学院（生命科学研究院）'},
+        //   {value:'国际教育学院',label:'国际教育学院'},
+        //   {value:'生物医学科学与工程学院',label:'生物医学科学与工程学院'},
+        //   {value:'吴贤铭智能工程学院',label:'吴贤铭智能工程学院'},
+        //   {value:'分子科学与工程学院（华南软物质科学与技术高等研究院）',label:'分子科学与工程学院（华南软物质科学与技术高等研究院 ）'},
+        //   {value:'微电子学院',label:'微电子学院'}
+        // ]
       }
     },
     methods: {
@@ -314,7 +316,7 @@
               .then(successResponse => {
                 if (eval(successResponse.data)['is_success'] === 'true') {
                   this.$message({message: '注册成功！',type: 'success',center:true})
-                  this.$router.replace({path: '/login'})
+                  this.activeName='sign_up';
                 }
                 else
                 {
@@ -347,6 +349,9 @@
           .then(successResponse => {
             if (successResponse.data === 'OK') {
               this.$message({message: '发送成功！请在5分钟之内完成验证',type: 'success',center:true})
+              this.time = 60;
+              this.disabled = true;
+              this.timer();
             }
             else
             {
@@ -358,9 +363,7 @@
             this.$notify.error({title: '发送异常！',message: failResponse.data});
           })
 
-        this.time = 6;
-        this.disabled = true;
-        this.timer();
+        
       },
       vcode_close(){
         this.vcode_isShow=false;

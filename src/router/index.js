@@ -49,6 +49,12 @@ const router = new VueRouter({
           meta:{auth:true}
         },
         {
+          path: '/release',
+          name: 'Release',
+          component:resolve=>require(['../components/Release'],resolve),
+          //component: Login
+        },
+        {
           path:'/user',
           name:'User',
           component:resolve=>require(['../components/User'],resolve),

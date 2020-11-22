@@ -1,9 +1,9 @@
 <template>
     <div class="img-list">
         <div class="img-li-box" v-for="(item,key) in imgList" :key="key">
-            <img class="img-li-b--url" :src="item.url">
+            <img class="img-li-b--url" :src="item.path"> <!-- 这里之前是item.url -->
             <div class="img-li-b--bottom">
-                <div class="img-li-b--name">{{ item.name }}</div>
+                <!-- <div class="img-li-b--name">{{ item.name }}</div> -->
                 <!-- <el-button type="text" @click="handleFileName(item,key)" disabled>修改名字</el-button> -->
             </div>
 
@@ -13,7 +13,7 @@
             </div>
 
             <!-- 放大icon -->
-            <div class="img-li-b--layer" @click="handleFileEnlarge(item.url)">
+            <div class="img-li-b--layer" @click="handleFileEnlarge(item.path)"> <!-- 这里之前是item.url -->
                 <i class="el-icon-view"></i>
             </div>
         </div>
@@ -32,9 +32,11 @@
             	:show-file-list="false" 
             	:action="params.action" 
             	:data="params.data" 
+                
             	:on-change="uploadOnChange" 
             	:on-success="uploadOnSuccess" 
-            	:on-error="uploadOnError" 
+            	:on-error="uploadOnError"
+                :before-upload="beforeUpload"
             	:on-progress="uploadOnProgress">
                 	<el-button type="primary">点击上传</el-button>
             </el-upload>
@@ -53,6 +55,11 @@
 
 <script>
 export default {
+    //props:['fileList','img_limit'],
+    props:{
+        fileList:{ type: Array, required:true},
+        img_limit:{ type:Number, default:99 }
+    },
     name: 'upload-list',
     data() {
         return {
@@ -60,21 +67,11 @@ export default {
             pass: null, //是否上传成功
             isEnlargeImage: false, //放大图片
             enlargeImage: '', //放大图片地址
-            imgList: [
-	            {
-	                url: 'http://125.216.249.215:45678/api/file/JfoUyIVGsJ.jpg',
-	                name: 'luotianyi'
-	            }, {
-	                url: 'http://125.216.249.215:45678/api/file/8glGIPf8KE.jpg',
-	                name: 'lemon2'
-	            }, {
-	                url: 'http://125.216.249.215:45678/api/file/AE6uXZZrHB.jpg',
-	                name: 'youtube'
-	            }
-            ],
+            imgList: this.fileList,
+            imgLimit: this.img_limit,
             params: {
                 //action: 'api/api/uploadImg',
-                action:'/api/debug/commodity/upload_image',
+                action:'/api/commodity/upload_image',
                 data: {}
             }
         }
@@ -112,8 +109,12 @@ export default {
             this.$message.success("上传成功")
             this.imgList.push({
                 url: file.url,
-                name: '新增图片'
+                name: '新增图片',
+                path: e,
             })
+            //console.log(this.imgList)
+            console.log('事件响应：',e)
+            //this.$emit('fileList',)
         },
         uploadOnError(e, file) {
             console.log("——————————error——————————")
@@ -154,16 +155,36 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                //可添加ajax
-                this.$message({
-                    type: 'success',
-                    message: '删除成功',
-                    onClose: () => {
+                this.$axios.post('/commodity/delete_img',{imageName:file.path.split('file/')[1]}).then(res=>{
+                    if(eval(res.data)['is_success']=='true'){
+                        this.$message({
+                        type: 'success',
+                        message: '删除成功'})
                         that.imgList.splice(i, 1)
+                    }
+                    else{
+                        this.$notify.error({title:'删除失败！',message: eval(res.data)['description']})
                     }
                 })
             }).catch((meg) => console.log(meg))
-        }
+        },
+        beforeUpload(file){ //上传前校验
+            console.log('限制',this.img_limit)
+            const isImage = (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/jfif' ||
+                            file.type === 'image/png' || file.type === 'image/bmp' );
+            const isLt2M = file.size / 1024 / 1024 < 2;
+            if (!isImage) {
+                this.$message.error('仅以下格式的图片可以上传：JPEG, JPG, JFIF, PNG, BMP');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!');
+            }
+            if (this.imgList.length == this.imgLimit){
+                this.$message.error('最多只能上传'+this.imgLimit.toString()+'张图片嗷~~┗|｀O′|┛');
+                return false;
+            }
+            return isImage && isLt2M;
+        },
     }
 }
 </script>

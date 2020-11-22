@@ -65,7 +65,8 @@ module.exports = (options = {}) => ({
     extensions: ['.js', '.vue', '.json', '.css']
   },
   devServer: {
-    host: '127.0.0.1',
+    useLocalIp: true,
+    host: '192.168.1.166',
     port: 8010,
     // proxy: {
     //   '/api': {
@@ -79,8 +80,8 @@ module.exports = (options = {}) => ({
     // },
     proxy: {
       '/api': {
-          //target: 'http://125.216.249.215:45678/',
-          target: 'http://127.0.0.1:12140/',
+          target: 'http://125.216.249.215:45678/',
+          //target: 'http://127.0.0.1:12141/',
           // 允许跨域
           changeOrigin: true,
           ws: true,
