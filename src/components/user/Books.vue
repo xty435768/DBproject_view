@@ -23,7 +23,7 @@
           </router-link>
           <div class="info">
             <div class="title">
-              <a href="">{{ item.title }}</a>
+              <a href="">{{ item.name.length > 8 ? item.name.substr(0, 7) + '…' : item.name }}</a>
             </div>
             <i class="el-icon-delete" @click="deleteBook(item.id, item.uid, item.cover, item.img_1, item.img_2, item.img_3, item.img_4, item.img_5)"></i>
           </div>
@@ -46,12 +46,6 @@ export default {
       currentPage: 1,
       pageSize: 18,
       BookMsg: 'BookMsg',
-      temp_data:
-        '[\
-                {"id":39,"cover":"http://125.216.249.215:45678/api/file/090AZUHxmR.jpg","title":"阿斯蒂芬","author":"阿斯蒂芬","date":"2020","price":"666","newOld":"八成新","contact":"222","phone":"222","qq":"222","weChat":"333","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"333","cid":"4","uid":"admin"}, \
-                {"id":40,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin"}, \
-                {"id":41,"cover":"http://125.216.249.215:45678/api/file/qSeyr2PXz1.jpg","title":"就跑了","author":"young","date":"2010","price":"123","newOld":"九成新","contact":"杨鸿申","phone":"15007580941","qq":"21452346","weChat":"6456412","img_1":"","img_2":"","img_3":"","img_4":"","img_5":"","abs":"213123","cid":"4","uid":"admin1"}, \
-                ]',
     }
   },
   //挂载数据后执行
@@ -69,7 +63,6 @@ export default {
     loadBooks() {
       console.log('loading books-------------')
       console.log(this)
-      //this.books = eval(this.temp_data)
 
       this.$axios
         .post('/student/get_release', {

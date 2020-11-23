@@ -36,10 +36,16 @@
       <div class="msgTitle">
         详细图片
       </div>
-      <div style="margin-top: 40px;">
-        <div style="margin: 20px;" v-for="(img, index) in bookMsg.imgs" :key="index">
-          <img style=" width:60px;" :src="img.dir" />
-        </div>
+
+      <div id="box">
+        <!-- <div style="margin: 20px;" v-for="(img, index) in bookMsg.imgs" :key="index">
+          <img float:left style=" width:60px;" :src="img.dir" />
+        </div> -->
+        <ul>
+          <li v-for="(img, index) in bookMsg.imgs" :key="index">
+            <img :src="img.dir" alt="" />
+          </li>
+        </ul>
       </div>
       <div class="msgTitle" style="line-height:200%">
         商品评论
@@ -64,11 +70,11 @@ export default {
   data() {
     return {
       bookInfo: [],
+      stuID: '',
       bookMsg: {
         id: '',
         name: '',
         price: '',
-        publisher: '',
         qq: '',
         stuName: '',
         abs: '',
@@ -96,10 +102,12 @@ export default {
   },
   methods: {
     addToCart() {
+      console.log(this.stuID)
+      console.log(this.bookMsg.id)
       this.$axios
         .post('/student/add_cart', {
-          studentID: 'admin',
-          commodityID: '',
+          studentID: this.stuID,
+          commodityID: this.bookMsg.id,
         })
         .then((resp) => {
           console.log(resp)
@@ -132,6 +140,7 @@ export default {
           this.bookMsg.imgs = resp.data.pictures
           this.bookMsg.qq = resp.data.student.qq
           this.bookMsg.stuName = resp.data.student.name
+          this.stuID = window.sessionStorage.getItem('user')
         }
       })
   },
@@ -139,6 +148,20 @@ export default {
 </script>
 
 <style scoped>
+#box ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+#box li {
+  padding: 3px;
+  list-style: none;
+  margin-right: 15px;
+  border: 1px solid #eee;
+}
+#box img {
+  width: 200px;
+  height: 150px;
+}
 .abs {
   margin: 20px;
   border: 2px;
