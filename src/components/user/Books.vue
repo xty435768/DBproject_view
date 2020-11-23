@@ -13,22 +13,7 @@
             :to="{
               path: '/itemDetail',
               query: {
-                title: item.title,
-                cover: item.cover,
-                price: item.price,
-                author: item.author,
-                date: item.date,
-                newOld: item.newOld,
-                contact: item.contact,
-                phone: item.phone,
-                qq: item.qq,
-                weChat: item.weChat,
-                abs: item.abs,
-                img_1: item.img_1,
-                img_2: item.img_2,
-                img_3: item.img_3,
-                img_4: item.img_4,
-                img_5: item.img_5,
+                id: item.id,
               },
             }"
             class="cover"
@@ -83,11 +68,12 @@ export default {
   methods: {
     loadBooks() {
       console.log('loading books-------------')
+      console.log(this)
       //this.books = eval(this.temp_data)
 
       this.$axios
         .post('/student/get_release', {
-          studentID: 'admin',
+          studentID: window.sessionStorage.getItem('user'),
         })
         .then((resp) => {
           console.log('logging resp')

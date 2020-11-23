@@ -14,34 +14,14 @@
         </div>
         <div class="col-main">
           <div class="div-msg" style="width:300px">
-            商品名：<span style="color: #d6524a;">{{ bookMsg.title }}</span>
+            商品名：<span style="color: #d6524a;">{{ bookMsg.name }}</span>
           </div>
           <div class="div-msg" style="width:300px">
             价格：<span style="color: #ff4400;font-size:26px">{{ bookMsg.price }}</span>
           </div>
-          <div class="div-msg" style="width:300px">发布者：{{ bookMsg.author }}</div>
+          <div class="div-msg" style="width:300px">发布者：{{ bookMsg.stuName }}</div>
           <div class="div-msg" style="width:300px">联系方式（QQ号）：{{ bookMsg.qq }}</div>
-          <!-- <div class=" div-msg">
-                        价&nbsp;格&nbsp;:&nbsp;<span style="color: #d6524a;">{{bookMsg.price}}&nbsp;元</span>
-                    </div>
-                    <div class=" div-msg">
-                        新&nbsp;旧&nbsp;:&nbsp;<span style="color: #000000;">{{bookMsg.newOld}}</span>
-                    </div>
-                    <div class=" div-msg">
-                        区&nbsp;域&nbsp;:&nbsp;<span style="color: #000000;">{{bookMsg.area}}</span>
-                    </div>
-                    <div class=" div-msg">
-                        联&nbsp;系&nbsp;人&nbsp;:&nbsp;<span style="color: #000000;">{{bookMsg.contact}}</span>
-                    </div>
-                    <div class=" div-msg">
-                        电&nbsp;话&nbsp;:&nbsp;<span style="color: #000000;">{{bookMsg.phone}}</span>
-                    </div>
-                    <div class=" div-msg">
-                        Q&nbsp;Q&nbsp;:&nbsp;<span style="color: #000000;">{{bookMsg.qq}}</span>
-                    </div>
-                    <div class=" div-msg">
-                        微&nbsp;信&nbsp;:&nbsp;<span style="color: #000000;">{{bookMsg.weChat}}</span>
-                    </div> -->
+
           <div class=" div-msg">
             <el-button type="primary" style="width: 150px;height: 50px;" @click="addToCart">添加到购物车</el-button>
           </div>
@@ -58,7 +38,7 @@
       </div>
       <div style="margin-top: 40px;">
         <div style="margin: 20px;" v-for="(img, index) in bookMsg.imgs" :key="index">
-          <img style=" width:600px;" :src="img.img" />
+          <img style=" width:60px;" :src="img.dir" />
         </div>
       </div>
       <div class="msgTitle" style="line-height:200%">
@@ -83,19 +63,17 @@ export default {
   name: 'itemDetail',
   data() {
     return {
+      bookInfo: [],
       bookMsg: {
-        title: '',
-        cover: '',
+        id: '',
+        name: '',
         price: '',
-        date: '',
-        newOld: '',
-        contact: '',
-        area: '江苏大学',
-        phone: '',
+        publisher: '',
         qq: '',
-        weChat: '',
+        stuName: '',
         abs: '',
-        imgs: [{ img: '' }, { img: '' }, { img: '' }, { img: '' }, { img: '' }],
+        cover: '',
+        imgs: [],
       },
       comments: [
         {
@@ -121,7 +99,7 @@ export default {
       this.$axios
         .post('/student/add_cart', {
           studentID: 'admin',
-          commodityID: ''
+          commodityID: '',
         })
         .then((resp) => {
           console.log(resp)
@@ -134,37 +112,28 @@ export default {
   },
 
   created() {
-    this.bookMsg.title = this.$route.query.title
-    this.bookMsg.cover = this.$route.query.cover
-    this.bookMsg.price = this.$route.query.price
-    this.bookMsg.author = this.$route.query.author
-    this.bookMsg.date = this.$route.query.date
-    this.bookMsg.newOld = this.$route.query.newOld
-    this.bookMsg.contact = this.$route.query.contact
-    this.bookMsg.phone = this.$route.query.phone
-    this.bookMsg.qq = this.$route.query.qq
-    this.bookMsg.weChat = this.$route.query.weChat
-    //this.bookMsg.abs=this.$route.query.abs;
-    this.bookMsg.abs =
-      '朋友们好啊我是浑元形意戳一戳掌门人马保国。\
-                刚才有个朋友问我马老师发生什么事了，我说怎么回事，给我发了一几张截图，我一看！嗷！原来是昨天，有两个年轻人，\
-                三十多岁，一个体重，九十多公斤，一个体重八十多公斤，他们说，唉…有一个说是我在爱乐土豪群练戳一戳指头练坏了，\
-                马老师你能不能教教我浑元指法，矮…帮助治疗一下，我的指关节。我说可以。我说你在土豪群练死劲儿，不好用，他不服气。\
-                我说小朋友：你两个手来找我一个手指头，他找不动。<br>他说你这也没用。我说我这个有用，这是化劲儿，传统戳一戳是讲化劲儿的\
-                四两拨千金。二百多斤的英国大力士，动我不动我这一个手指头。啊…哈！他非和我试试，我说可以。诶…我一说的啪就站起来了，\
-                很快啊！然后上来就是一个左戳戳一个右戳戳一个左戳戳，我全部防区防出去了啊防出去以后自然是传统指法以点到为止右指放到他头像\
-                上没戳他，我笑一下准备收指，由这时间，欸传统戳一戳的点到为止他已经输了，如果这一指发力，一戳就把他戳出来了，放在头像上\
-                没有戳他，他也承认，我先戳到他头像。他不知道指头放在他头像上，他承认我先戳到他头像，啊，我收指的时间不戳了，他突然袭击来戳\
-                我头像，啊，我大意了啊，没有闪，矮…他的左指头给我用户名，啊，用户名，蹭了一下，但没关系啊！<br>他也说，啊他截图也说了，两分多\
-                钟以后，当时用户名戳出来了了，捂着屏幕，我说停停。然后两分钟钟以后，两分多钟以后诶就没人记得了，我说小伙子你不讲武德你不懂\
-                ，我说马老师对不对不起，我不懂规矩。啊，我是…他说他是乱打的，他可不是乱打的啊，训练有素，后来他说他练过三四年一阳指，啊，\
-                看来是有备而来！这两个年轻人不讲武德，来骗，来偷袭，我六十九岁的老账号，这好吗？这不好，我劝这位年轻人好自为之，好好反思，\
-                以后不要再犯这样的聪明，小聪明，啊，呃…武林要以和为贵，要讲武德，不要搞窝里斗，谢谢朋友们！😁😂'
-    this.bookMsg.imgs[0].img = this.$route.query.img_1
-    this.bookMsg.imgs[1].img = this.$route.query.img_2
-    this.bookMsg.imgs[2].img = this.$route.query.img_3
-    this.bookMsg.imgs[3].img = this.$route.query.img_4
-    this.bookMsg.imgs[4].img = this.$route.query.img_5
+    console.log('item created')
+    console.log(this.$route.query)
+    this.bookMsg.id = this.$route.query.id
+  },
+  mounted() {
+    this.$axios
+      .post('/commodity/get', {
+        commodityID: this.bookMsg.id,
+      })
+      .then((resp) => {
+        console.log(resp)
+        if (resp && resp.status === 200) {
+          console.log(resp.data)
+          this.bookMsg.name = resp.data.name
+          this.bookMsg.cover = resp.data.cover.dir
+          this.bookMsg.price = resp.data.price
+          this.bookMsg.abs = resp.data.description
+          this.bookMsg.imgs = resp.data.pictures
+          this.bookMsg.qq = resp.data.student.qq
+          this.bookMsg.stuName = resp.data.student.name
+        }
+      })
   },
 }
 </script>
