@@ -69,7 +69,7 @@ module.exports = (options = {}) => ({
   },
   devServer: {
     useLocalIp: true,
-    host: '127.0.0.1',
+    host: '192.168.1.166',
     port: 8010,
     // proxy: {
     //   '/api': {

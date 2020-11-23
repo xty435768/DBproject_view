@@ -1,4 +1,4 @@
-export const department_options = [
+const department_options = [
     {value:'机械与汽车工程学院',label:'机械与汽车工程学院'},
     {value:'建筑学院',label:'建筑学院'},
     {value:'土木与交通学院',label:'土木与交通学院'},
@@ -34,3 +34,24 @@ export const department_options = [
     {value:'分子科学与工程学院（华南软物质科学与技术高等研究院）',label:'分子科学与工程学院（华南软物质科学与技术高等研究院 ）'},
     {value:'微电子学院',label:'微电子学院'}
   ]
+
+function getCurrentTime () {
+    var date = new Date();
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    var h = date.getHours();
+    h = h < 10 ? ('0' + h) : h;
+    var minute = date.getMinutes();
+    var second = date.getSeconds();
+    minute = minute < 10 ? ('0' + minute) : minute;
+    second = second < 10 ? ('0' + second) : second;
+    return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second + '.' + date.getMilliseconds();
+}
+
+export{
+  getCurrentTime,
+  department_options
+}
