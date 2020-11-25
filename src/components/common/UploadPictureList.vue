@@ -58,7 +58,9 @@ export default {
     //props:['fileList','img_limit'],
     props:{
         fileList:{ type: Array, required:true},
-        img_limit:{ type:Number, default:99 }
+        img_limit:{ type:Number, default:99 },
+        onSuccessFromFather:{ type:Function, required:true},
+        onRemoveFromFather:{ type:Function, required:true},
     },
     name: 'upload-list',
     data() {
@@ -113,6 +115,10 @@ export default {
                 path: e,
             })
             //console.log(this.imgList)
+            if(this.onSuccessFromFather){
+                //onSuccessFromFather是可选的，主要是为了同步数据库
+                this.onSuccessFromFather(e);
+            }
             console.log('事件响应：',e)
             //this.$emit('fileList',)
         },
@@ -144,9 +150,9 @@ export default {
                 this.$message.success("操作成功")
             }).catch(() => {})
         },
-        handleFileRemove(file, i) { //删除图片
-            console.log(file, i)
-            if (!file.url) {
+        handleFileRemove(file, index) { //删除图片
+            console.log(file, index)
+            if (!file.path) {
                 return false;
             }
             let that = this;
@@ -155,17 +161,11 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$axios.post('/commodity/delete_img',{imageName:file.path.split('file/')[1]}).then(res=>{
-                    if(eval(res.data)['is_success']=='true'){
-                        this.$message({
-                        type: 'success',
-                        message: '删除成功'})
-                        that.imgList.splice(i, 1)
-                    }
-                    else{
-                        this.$notify.error({title:'删除失败！',message: eval(res.data)['description']})
-                    }
-                })
+                if(this.onRemoveFromFather){
+                    //必须指定onRemoveFromFather，该函数返回true则同意删除
+                    this.onRemoveFromFather(file.path,index)
+                    
+                }
             }).catch((meg) => console.log(meg))
         },
         beforeUpload(file){ //上传前校验

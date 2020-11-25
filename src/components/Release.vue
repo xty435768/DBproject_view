@@ -18,12 +18,12 @@
             </div>
             <div v-if="active == 1">
                 <h3>上传封面</h3>
-                <upload-picture-list :fileList="imgListCover" :img_limit="1"></upload-picture-list>
+                <upload-picture-list :fileList="imgListCover" :img_limit="1" :onRemoveFromFather="onRemoveFromFatherCover" :onSuccessFromFather="null"></upload-picture-list>
                 <el-button @click="backClick">返 回</el-button>
             </div>
             <div v-if="active == 2">
                 <h3>上传描述图片</h3>
-                <upload-picture-list :fileList="imgList" :img_limit="5"></upload-picture-list>
+                <upload-picture-list :fileList="imgList" :img_limit="5" :onRemoveFromFather="onRemoveFromFatherImage" :onSuccessFromFather="null"></upload-picture-list>
                 <el-button @click="backClick">返 回</el-button>
             </div>
         </el-form>
@@ -73,16 +73,42 @@ export default {
         }
     },
     methods:{
+        onRemoveFromFatherCover(file_path,index){
+            this.$axios.post('/commodity/delete_cover',{imageName:file_path}).then(res=>{
+                if(eval(res.data)['is_success']=='true'){
+                    this.$message({
+                    type: 'success',
+                    message: '删除成功'})
+                    this.imgListCover.splice(index, 1)
+                }
+                else{
+                    this.$notify.error({title:'删除失败！',message: eval(res.data)['description']})
+                }
+            })
+        },
+        onRemoveFromFatherImage(file_path,index){
+            this.$axios.post('/commodity/delete_img',{imageName:file_path}).then(res=>{
+                if(eval(res.data)['is_success']=='true'){
+                    this.$message({
+                    type: 'success',
+                    message: '删除成功'})
+                    this.imgList.splice(index, 1)
+                }
+                else{
+                    this.$notify.error({title:'删除失败！',message: eval(res.data)['description']})
+                }
+            })
+        },
         reset(){
             this.commodityForm.name = '';
             this.commodityForm.description= '';
-            this.price = '';
-            imgList=[];
-            imgListCover=[];
-            uploadCoverText='上传封面图片(当前未上传)';
-            uploadImageText='上传描述图片(当前未上传)';
-            uploadCoverType='info';
-            uploadImageType='info';
+            this.commodityForm.price = '';
+            this.imgList=[];
+            this.imgListCover=[];
+            this.uploadCoverText='上传封面图片(当前未上传)';
+            this.uploadImageText='上传描述图片(当前未上传)';
+            this.uploadCoverType='info';
+            this.uploadImageType='info';
         },
         submit(){
             //alert('提交！')

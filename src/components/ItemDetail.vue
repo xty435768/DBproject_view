@@ -8,7 +8,7 @@
     <el-main class="el-main">
       <div style=" margin-top: 30px;">
         <div style="margin-left: 200px; float: left;">
-          <div class="col-left">
+          <div class="col-left" @click="handleEnlarge(bookMsg.cover)">
             <img :src="bookMsg.cover" class="img-title" style="width: 300px;" />
           </div>
         </div>
@@ -42,8 +42,8 @@
           <img float:left style=" width:60px;" :src="img.dir" />
         </div> -->
         <ul>
-          <li v-for="(img, index) in bookMsg.imgs" :key="index">
-            <img :src="img.dir" alt="" />
+          <li v-for="(img, index) in bookMsg.imgs" :key="index" @click="handleEnlarge(img.dir)" >
+            <img :src="img.dir" alt=""  />
           </li>
         </ul>
       </div>
@@ -61,6 +61,13 @@
     <el-footer>
       <!--Footer-->
     </el-footer>
+    <el-dialog title="" 
+      :visible.sync="isEnlargeImage" 
+      :modal-append-to-body="false" 
+      top="8%" 
+      width="60%">
+        <img @click="isEnlargeImage = false" style="width:100%;" :src="enlargeImage">
+    </el-dialog>
   </el-container>
 </template>
 
@@ -69,6 +76,8 @@ export default {
   name: 'itemDetail',
   data() {
     return {
+      isEnlargeImage:false,
+      enlargeImage:'',
       bookInfo: [],
       stuID: '',
       bookMsg: {
@@ -80,6 +89,7 @@ export default {
         abs: '',
         cover: '',
         imgs: [],
+        
       },
       comments: [
         {
@@ -117,6 +127,13 @@ export default {
         })
       alert('添加到购物车！')
     },
+    handleEnlarge(dir){
+      console.log(dir);
+      if(dir){
+        this.enlargeImage = dir;
+        this.isEnlargeImage = !this.isEnlargeImage;
+      }
+    }
   },
 
   created() {
@@ -157,6 +174,7 @@ export default {
   list-style: none;
   margin-right: 15px;
   border: 1px solid #eee;
+  cursor: pointer;
 }
 #box img {
   width: 200px;
@@ -226,4 +244,6 @@ export default {
   cursor: pointer;
   text-decoration: none;
 }
+
+
 </style>
