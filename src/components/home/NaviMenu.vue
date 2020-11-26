@@ -19,6 +19,11 @@
 <script>
     export default {
         name: 'NavMenu',
+        created(){
+            if(sessionStorage.getItem('user_type') === 'admin'){
+                this.navList.push({name: '/admin/items', navItem: '商城管理员'})
+            }
+        },
         data () {
             return {
                 
