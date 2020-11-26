@@ -38,11 +38,11 @@
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button size="mini" v-if="scope.row.if_get_book == '已收货'" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button size="mini" v-if="scope.row.if_get_book != '已收货'" disabled type="danger">删除</el-button>
 
             <el-button size="mini" v-if="scope.row.if_get_book == '已下单'" type="success" @click="handleSend(scope.$index, scope.row)">发货</el-button>
-            <el-button size="mini" v-if="scope.row.if_get_book == '已发货'" disabled type="success" >发货</el-button>
-            
+            <el-button size="mini" v-if="scope.row.if_get_book == '已发货'" disabled type="success">发货</el-button>
           </template>
         </el-table-column>
       </el-table>
