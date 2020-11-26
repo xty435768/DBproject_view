@@ -74,6 +74,7 @@ const router = new VueRouter({
       path: '/admin',
       name: 'Admin',
       component:resolve=>require(['../components/Admin'],resolve),
+      meta:{auth:true},
       children:[
         {path:'/admin/items',component:resolve=>require(['../components/admin/manageItem'],resolve)},
       ]
@@ -101,10 +102,20 @@ router.beforeEach((to, form, next) => {
       showClose: true,
       message: '请先登录',
       type: 'warning'
-    });
-    next({ path: '/login' });
+      });
+      next({ path: '/login' });
     }
-    else next();
+    else {
+      if(to.path.substr(0,6) === '/admin' && sessionStorage.getItem('user_type') != 'admin'){
+        Message({
+          showClose: true,
+          message: '您当前无权访问该页面',
+          type: 'warning'
+        });
+        return;
+      }
+      next();
+    }
   } 
   else if(to.path=='/login' && flag){
     Message({

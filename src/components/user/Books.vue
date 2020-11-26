@@ -27,7 +27,7 @@
             </div>
             <!--  -->
             <i class="el-icon-delete" @click="deleteBook(item.id)"></i>
-            <i class="el-icon-edit" @click="editBook(item.id)"></i>
+            <i class="el-icon-edit" @click="editBook(item.id)" v-if="showEdit"></i>
           </div>
           
           <div class="author" style="color: #ee231e;">{{ item.price }}元</div>
@@ -72,6 +72,10 @@
 <script>
 import UploadPictureList from '../common/UploadPictureList.vue'
 export default {
+  props:{
+    dataSourceAPI:{ type: String, default:'/student/get_release'},
+    showEdit:{type: Boolean, default: true},
+  },
   components: { UploadPictureList },
   name: 'Books',
   data() {
@@ -106,6 +110,7 @@ export default {
     this.$bus.on('changeCurrentPage', (val) => {
       this.currentPage = val
     })
+    console.log('金坷垃',this.showEdit);
   },
   destroyed() {
     this.$bus.off('changeCurrentPage')
@@ -174,7 +179,7 @@ export default {
       console.log(this)
 
       this.$axios
-        .post('/student/get_release', {
+        .post(this.dataSourceAPI, {
           studentID: window.sessionStorage.getItem('user'),
         })
         .then((resp) => {
@@ -204,7 +209,7 @@ export default {
     deleteBook(id) {
       //commodity/delete  commodityID
       console.log('deleting books')
-      this.$confirm('此操作将永久删除该书籍, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',

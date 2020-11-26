@@ -5,7 +5,7 @@
         South China University of Technology Commercial Platform
       </router-link>
     </el-header>
-    <el-main class="el-main">
+    <el-main class="el-main" v-if="idIsValid">
       <div style=" margin-top: 30px;">
         <div style="margin-left: 200px; float: left;">
           <div class="col-left" @click="handleEnlarge(bookMsg.cover)">
@@ -28,7 +28,7 @@
         </div>
       </div>
     </el-main>
-    <div class="center">
+    <div class="center" v-if="idIsValid">
       <div class="msgTitle">
         详情描述
       </div>
@@ -51,14 +51,14 @@
         商品评论
       </div>
       <div>
-        <el-table :data="comments" style="width:100%">
+        <el-table :data="comments" style="width:100%" empty-text="这个商品还没有评论嗷">
           <el-table-column prop="name" label="用户" width="200"></el-table-column>
           <el-table-column prop="time" label="发布时间" width="200" sortable></el-table-column>
           <el-table-column prop="comment" label="评论内容"></el-table-column>
         </el-table>
       </div>
     </div>
-    <el-footer>
+    <el-footer v-if="idIsValid">
       <!--Footer-->
     </el-footer>
     <el-dialog title="" 
@@ -68,6 +68,11 @@
       width="60%">
         <img @click="isEnlargeImage = false" style="width:100%;" :src="enlargeImage">
     </el-dialog>
+    <div v-if="idIsValid == false">
+      <h1>
+        该商品不存在或已被删除！
+      </h1>
+    </div>
   </el-container>
 </template>
 
@@ -80,6 +85,7 @@ export default {
       enlargeImage:'',
       bookInfo: [],
       stuID: '',
+      idIsValid: false,
       bookMsg: {
         id: '',
         name: '',
@@ -150,16 +156,37 @@ export default {
         console.log(resp)
         if (resp && resp.status === 200) {
           console.log(resp.data)
+          if(resp.data == null){
+            this.idIsValid = false;
+            return;
+          }
+          this.idIsValid = true;
           this.bookMsg.name = resp.data.name
           this.bookMsg.cover = resp.data.cover.dir
           this.bookMsg.price = resp.data.price
-          this.bookMsg.abs = resp.data.description
+          this.bookMsg.abs = resp.data.description.replaceAll("\n","<br>");
           this.bookMsg.imgs = resp.data.pictures
           this.bookMsg.qq = resp.data.student.qq
           this.bookMsg.stuName = resp.data.student.name
           this.stuID = window.sessionStorage.getItem('user')
         }
+      }).catch(failResponse => {
+        this.$notify.error({title: '拉取商品信息失败',message: failResponse.data});
       })
+    this.$axios.post('/commodity/get_comments',{commodityID:this.bookMsg.id}).then(res=>{
+      this.comments.length = 0;
+      for (let index = 0; index < res.data.length; index++) {
+        const element = res.data[index];
+        console.log(element)
+        this.comments.push({
+          name: element.student.name,
+          comment: element.content,
+          time: element.time,
+        })
+      }
+    }).catch(failResponse => {
+        this.$notify.error({title: '拉取商品评论失败',message: failResponse.data});
+    })
   },
 }
 </script>
