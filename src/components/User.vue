@@ -4,7 +4,7 @@
     class="mc-root mc-ui-absolute-pane"
   >
     <el-row
-      style="position: absolute; left: 10%; top: 13.5714%; width: 80%; height: 580px;"
+      style="position: absolute; left: 10%; top: 13.5714%; width: 100%; height: 580px;"
       v-if="true"
     >
       <el-col

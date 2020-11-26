@@ -26,14 +26,14 @@
               <a href="">{{ item.name.length > 8 ? item.name.substr(0, 7) + '…' : item.name }}</a>
             </div>
             <!--  -->
-            <i class="el-icon-delete" @click="deleteBook(item.id, item.uid, item.cover, item.img_1, item.img_2, item.img_3, item.img_4, item.img_5)"></i>
+            <i class="el-icon-delete" @click="deleteBook(item.id)"></i>
             <i class="el-icon-edit" @click="editBook(item.id)"></i>
           </div>
           
           <div class="author" style="color: #ee231e;">{{ item.price }}元</div>
         </el-card>
       </el-tooltip>
-      <input type="button" value="select" v-on:click="loadBooks" />
+      
     </el-row>
     <el-row>
       <el-pagination @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" :total="books.length"> </el-pagination>

@@ -1,17 +1,23 @@
 <template>
   <div>
-    <el-table
-      :data="orderList"
-      @selection-change="handleSelectionChange"
-    >
+    <el-table :data="orderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column type="index" label="#"></el-table-column>
-      <el-table-column label="商品名称" >
+      <el-table-column label="商品名称">
         <template slot-scope="scope">
           <div>
-            <a href="http://127.0.0.1:8010/#/itemDetail?id=9">
-              asdas
-            </a>
+            <router-link
+              target="_blank"
+              :to="{
+                path: '/itemDetail',
+                query: {
+                  id: scope.row.bookID,
+                },
+              }"
+              
+            >
+              {{ orderList[scope.$index].book_name }}
+            </router-link>
           </div>
         </template>
       </el-table-column>
@@ -74,6 +80,7 @@ export default {
       btn: 0,
       // 订单列表
       orderList: [],
+      selected: [],
     };
   },
 
@@ -82,11 +89,40 @@ export default {
     this.getOrderList();
   },
   methods: {
-    
-    handleDelete(index, row) {
-      console.log(index, row);
+    delete_book_in_market(){
 
-      console.log(this.orderList);
+    },
+    uploadOrder(index) {
+      this.$axios
+        .post("/transaction/create", {
+          commodityID: this.orderList[index].bookID,
+          studentID: window.sessionStorage.getItem("user"),
+          time: getCurrentTime(),
+          status: "已下单",
+          description: "",
+        })
+        .then((resp) => {
+          console.log("creating new order");
+          console.log(resp);
+          if (resp && resp.status === 200) {
+            console.log("create success");
+          }
+        });
+    },
+    deleteHelper(index) {
+      this.$axios
+        .post("/student/delete_cart", {
+          cartID: this.orderList[index].cartID,
+        })
+        .then((resp) => {
+          console.log("delete cart");
+          console.log(resp);
+          if (resp && resp.status === 200) {
+            console.log("delete success");
+          }
+        });
+    },
+    handleDelete(index, row) {
       this.$confirm("此操作把此商品移除购物出, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -97,17 +133,7 @@ export default {
             type: "success",
             message: "删除成功!",
           });
-          this.$axios
-            .post("/student/delete_cart", {
-              cartID: this.orderList[index].cartID,
-            })
-            .then((resp) => {
-              console.log("delete cart");
-              console.log(resp);
-              if (resp && resp.status === 200) {
-                console.log("delete success");
-              }
-            });
+          this.deleteHelper(index, row);
           this.orderList.splice(index, 1);
         })
         .catch(() => {
@@ -128,6 +154,11 @@ export default {
         }
       )
         .then(() => {
+          for (var i = 0; i < this.selected.length; ++i) {
+            this.uploadOrder(this.selected[i]);
+            this.deleteHelper(this.selected[i]);
+            this.orderList.splice(this.selected[i], 1);
+          }
           this.$message({
             type: "success",
             message: "购买成功!",
@@ -142,13 +173,14 @@ export default {
     },
     handleSelectionChange(val) {
       this.btn = val.length;
-
-      console.log(val);
+      this.selected = [];
+      // console.log(val);
       var price = 0;
       for (var i = 0; i < val.length; i++) {
         price += parseInt(val[i].order_price);
+        this.selected.push(val[i].position);
       }
-
+      console.log(this.selected);
       this.total_price = price;
     },
     // 获取订单数据列表
@@ -160,7 +192,7 @@ export default {
         })
         .then((resp) => {
           // console.log("showing cart");
-          //console.log(resp.data);
+          console.log(resp.data);
           if (resp && resp.status === 200) {
             for (var i = 0; i < resp.data.length; i++) {
               this.orderList.push({
@@ -169,15 +201,11 @@ export default {
                 mobile: resp.data[i].commodity.student.mobile,
                 cartID: resp.data[i].id,
                 bookID: resp.data[i].commodity.id,
+                position: i,
               });
             }
           }
         });
-      // const {data:res} = await this.$http.get('orders', {params: this.queryInfo})
-      // if(res.meta.status !== 200) return this.$message.error('获取订单列表失败！')
-      // console.log(res.data)
-      // this.orderList = res.data.goods
-      // this.total = res.data.total
     },
   },
 };
