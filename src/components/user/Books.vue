@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row style="height: 840px;margin: 40px 40px auto 40px">
+    <el-row style="height: 500px;margin: 40px 40px auto 40px">
       <el-tooltip effect="dark" placement="right" v-for="item in books.slice((currentPage - 1) * pageSize, currentPage * pageSize)" :key="item.id">
         <p slot="content" style="font-size: 14px;margin-bottom: 6px;">《{{ item.name }}》</p>
         <p slot="content" style="font-size: 13px;margin-bottom: 6px">
@@ -23,7 +23,7 @@
           </router-link>
           <div class="info">
             <div class="title">
-              <a href="">{{ item.name.length > 8 ? item.name.substr(0, 7) + '…' : item.name }}</a>
+              <a :href="'/#/ItemDetail?id='+item.id">{{ item.name.length > 8 ? item.name.substr(0, 7) + '…' : item.name }}</a>
             </div>
             <!--  -->
             <i class="el-icon-delete" @click="deleteBook(item.id)"></i>
@@ -91,8 +91,16 @@ export default {
                 price:''
             },
       commodity_rules:{
-          name:[{required:true, message:'请输入商品名称',trigger:'blur'},{ min: 2, max: 40, message: '最少输入2个字，最长输入40个字！你输入了个字', trigger: 'blur' }],
-          description:[{required:true, message:'请输入商品描述',trigger:'blur'},{ min: 5, max: 2000, message: '最少输入2个字，最长输入2000个字！你输入了个字', trigger: 'blur' }],
+          name:[{required:true, message:'请输入商品名称',trigger:'blur'},{ validator:(rule,value,callback)=>{
+              if(value==='') { callback(new Error('请输入商品名称')) }
+              else if(value.length < 3 || value.length > 40){ callback(new Error('最少输入3个字，最长输入40个字！你输入了'+value.length+'个字')) }
+              else{ callback() }
+          }, trigger: 'blur' }],
+          description:[{required:true, message:'请输入商品描述',trigger:'blur'},{ validator:(rule,value,callback)=>{
+              if(value==='') { callback(new Error('请输入商品描述')) }
+              else if(value.length < 5 || value.length > 2000){ callback(new Error('最少输入5个字，最长输入2000个字！你输入了'+value.length+'个字')) }
+              else{ callback() }
+          }, trigger: 'blur' }],
           price:[{required:true,message:'请输入商品价格',trigger:'blur'},{ validator:(rule,value,callback)=>{
               if(value==='') { callback(new Error('请输入商品价格')) }
               else if(!/^[0-9]{1,8}(\.[0-9]{1,2})?$/.test(this.commodityForm.price)){ callback(new Error('商品价格需为不超过一亿的整数或一位或两位小数！')) }

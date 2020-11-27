@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Books books class="books-area" ref="booksArea"
+        <Books books style="width:1150px" ref="booksArea"
             :dataSourceAPI="'/commodity/get_all'"
             :showEdit="false"></Books>
     </div>

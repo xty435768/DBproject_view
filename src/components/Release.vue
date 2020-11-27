@@ -54,8 +54,16 @@ export default {
                 price:''
             },
             commodity_rules:{
-                name:[{required:true, message:'请输入商品名称',trigger:'blur'},{ min: 2, max: 40, message: '最少输入2个字，最长输入40个字！你输入了个字', trigger: 'blur' }],
-                description:[{required:true, message:'请输入商品描述',trigger:'blur'},{ min: 5, max: 2000, message: '最少输入2个字，最长输入2000个字！你输入了个字', trigger: 'blur' }],
+                name:[{required:true, message:'请输入商品名称',trigger:'blur'},{ validator:(rule,value,callback)=>{
+                    if(value==='') { callback(new Error('请输入商品名称')) }
+                    else if(value.length < 3 || value.length > 40){ callback(new Error('最少输入3个字，最长输入40个字！你输入了'+value.length+'个字')) }
+                    else{ callback() }
+                }, trigger: 'blur' }],
+                description:[{required:true, message:'请输入商品描述',trigger:'blur'},{ validator:(rule,value,callback)=>{
+                    if(value==='') { callback(new Error('请输入商品描述')) }
+                    else if(value.length < 5 || value.length > 2000){ callback(new Error('最少输入5个字，最长输入2000个字！你输入了'+value.length+'个字')) }
+                    else{ callback() }
+                }, trigger: 'blur' }],
                 price:[{required:true,message:'请输入商品价格',trigger:'blur'},{ validator:(rule,value,callback)=>{
                     if(value==='') { callback(new Error('请输入商品价格')) }
                     else if(!/^[0-9]{1,8}(\.[0-9]{1,2})?$/.test(this.commodityForm.price)){ callback(new Error('商品价格需为不超过一亿的整数或一位或两位小数！')) }

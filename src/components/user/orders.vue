@@ -3,7 +3,7 @@
     <div width="100%">
       <el-table :data="orderList" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="45"> </el-table-column> -->
-        <el-table-column type="index" label="#"></el-table-column>
+        <el-table-column prop="id" label="ID" width="70px"></el-table-column>
         <el-table-column label="商品名称">
           <template slot-scope="scope">
             <div>
@@ -21,25 +21,27 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="订单价格" prop="order_price" sortable></el-table-column>
+        <el-table-column label="订单价格" prop="order_price" sortable width="120px"></el-table-column>
         <el-table-column prop="order_time" label="下单时间" sortable></el-table-column>
         <el-table-column label="联系方式" prop="mobile"></el-table-column>
-        <el-table-column label="是否收到" prop="if_get_book">
+        <el-table-column label="是否收到" prop="if_get_book" width="100px">
           <template slot-scope="scope">
             <el-tag type="danger" v-if="scope.row.if_get_book == '已下单'">未发货</el-tag>
             <el-tag type="primary" v-if="scope.row.if_get_book == '已发货'">已发货</el-tag>
+            <el-tag type="primary" v-if="scope.row.if_get_book == '已评价'">已评价</el-tag>
             <el-tag type="success" v-if="scope.row.if_get_book == '已收货'">已收货</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.if_get_book != '已收货'" size="mini" type="danger" disabled @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-            <el-button v-if="scope.row.if_get_book == '已收货'" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button size="mini" type="danger" :disabled="!(scope.row.if_get_book in {'已收货':'','已评价':''})" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <!-- <el-button v-if="scope.row.if_get_book == '已收货'" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
 
             <el-button v-if="scope.row.if_get_book == '已发货'" size="mini" type="success" @click="handleSuccess(scope.$index, scope.row)">确认到货</el-button>
             <el-button v-if="scope.row.if_get_book == '已下单'" size="mini" type="success" disabled>确认到货</el-button>
 
             <el-button v-if="scope.row.if_get_book == '已收货'" size="mini" type="primary" @click="addComment(scope.$index, scope.row)">添加评论</el-button>
+            <!-- <el-button v-if="scope.row.if_get_book == '已评价'" size="mini" type="primary" disabled>已评论</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -61,11 +63,13 @@ export default {
       return 'error'
     },
     addComment(index, row) {
+      console.log('hello',row)
       this.$prompt('年轻人，请输入你的评论', '来评', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        inputType:'textarea',
         inputValidator: (val) => {
-          if (val.length < 3 || val.length > 200) return '最少输入3个字，最长输入200个字！'
+          if (val.length < 3 || val.length > 200) return '最少输入3个字，最长输入200个字！你输入了'+val.length+'个字'
         },
       })
         .then(({ value }) => {
@@ -80,14 +84,27 @@ export default {
             })
             .then((resp) => {
               console.log(resp)
-              if (resp && resp.status === 200) {
-                console.log('add comment success')
+              if (eval(resp.data)['is_success'] === 'true') {
+                this.$axios
+                  .post('/transaction/update_status', {
+                    transactionID: this.orderList[index].transactionID,
+                    time: getCurrentTime(),
+                    status: '已评价',
+                    description: '',
+                  })
+                  .then((resp) => {
+                    if (eval(resp.data)['is_success']=='true') {
+                      this.orderList[index].if_get_book = '已评价'
+                      this.$message({ type: 'success', message: '评论提交成功',})
+                    } else {
+                      this.$notify.error({title: '状态更新失败',message: eval(resp.data)['description']})
+                    }
+                  })
+              }else{
+                  this.$notify.error({title: '添加评论失败',message: '可能是评论中含有emoji表情等非法字符，请检查后重试。详细信息：\n'+eval(resp.data)['description']})
               }
-            })
-          this.$message({
-            type: 'success',
-            message: '评论提交成功' + value,
-          })
+            }).catch(failResponse => {
+            this.$notify.error({title: '添加评论异常',message: failResponse.message});})
         })
         .catch(() => {
           this.$message({
@@ -97,22 +114,40 @@ export default {
         })
     },
     handleSuccess(index, row) {
-      this.orderList[index].if_get_book = '已收货'
-      this.$axios
-        .post('/transaction/update_status', {
-          transactionID: this.orderList[index].transactionID,
-          time: getCurrentTime(),
-          status: '已收货',
-          description: '',
+      if(this.orderList[index].if_get_book == '已收货'){
+        this.$message({
+          type: 'error',
+          message: '不能重复收货！请刷新页面后重试！',
         })
-        .then((resp) => {
-          console.log('showing orders')
-          console.log(resp.data)
-          if (resp && resp.status === 200) {
-          } else {
-            console.log('err')
-          }
-        })
+      }
+      this.$confirm('确认收到宝贝了吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          //this.orderList[index].if_get_book = '已收货'
+          this.$axios
+            .post('/transaction/update_status', {
+              transactionID: this.orderList[index].transactionID,
+              time: getCurrentTime(),
+              status: '已收货',
+              description: '',
+            })
+            .then((resp) => {
+              if (eval(resp.data)['is_success']=='true') {
+                this.orderList[index].if_get_book = '已收货'
+              } else {
+                this.$notify.error({title: '状态更新失败',message: eval(resp.data)['description']})
+              }
+            })
+            //更新transaction status
+            //this.getOrderList();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消确认收货'
+          });          
+        });
     },
     handleDelete(index, row) {
       this.$confirm('确定要删除订单吗?', '提示', {
@@ -147,6 +182,7 @@ export default {
           if (resp && resp.status === 200) {
             for (var i = 0; i < resp.data.length; i++) {
               this.orderList.push({
+                id: resp.data[i].id,
                 commodityID: resp.data[i].commodity.id,
                 bookName: resp.data[i].commodity.name,
                 order_price: resp.data[i].commodity.price,

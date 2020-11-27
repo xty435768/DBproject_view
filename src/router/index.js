@@ -67,18 +67,20 @@ const router = new VueRouter({
             {path:'/user/cart',component:resolve=>require(['../components/user/cart'],resolve)},
             {path:'/user/selling',component:resolve=>require(['../components/user/selling'],resolve)}
           ]
-        }
+        },
+        {
+          path: '/admin',
+          name: 'Admin',
+          component:resolve=>require(['../components/Admin'],resolve),
+          meta:{auth:true},
+          children:[
+            {path:'/admin/items',component:resolve=>require(['../components/admin/manageItem'],resolve)},
+            {path:'/admin/transactions',component:resolve=>require(['../components/admin/viewTransaction'],resolve)},
+          ]
+        },
       ]
     },
-    {
-      path: '/admin',
-      name: 'Admin',
-      component:resolve=>require(['../components/Admin'],resolve),
-      meta:{auth:true},
-      children:[
-        {path:'/admin/items',component:resolve=>require(['../components/admin/manageItem'],resolve)},
-      ]
-    },
+    
     {
       path: '/404',
       name: 'notFound',

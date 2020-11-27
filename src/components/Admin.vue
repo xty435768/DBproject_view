@@ -18,13 +18,13 @@
           router
         >
           <el-menu-item index="/admin/items">管理商品信息</el-menu-item>
-          <el-menu-item index="/index">返回主页</el-menu-item>
+          <el-menu-item index="/admin/transactions">查看所有订单</el-menu-item>
           <!-- <el-menu-item index="/user/items">我发布的商品</el-menu-item>
           <el-menu-item style="left: 0px;" index="/user/pwd">密码修改</el-menu-item> -->
         </el-menu>
       </el-col>
       <el-col
-        style="width: 68.1481%; height: 548px;"
+        style="width: 80%; height: 548px;"
         :xs="24"
         :md="12"
       >

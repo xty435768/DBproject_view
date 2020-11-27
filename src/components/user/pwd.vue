@@ -87,6 +87,9 @@ export default {
         }).then(res=>{
           if(eval(res.data)['is_success']=='true'){
             this.$message({message:'修改密码成功！',type:'success',center:true,showClose:true})
+            this.password_form.old_password = '';
+            this.password_form.new_password = '';
+            this.password_form.new_password_confirm = '';
           }
           else this.$notify.error({title:'修改失败！',message: eval(res.data)['description']})
         }).catch(failResponse=>{

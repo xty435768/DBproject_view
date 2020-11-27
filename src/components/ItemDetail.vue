@@ -55,6 +55,14 @@
           <el-table-column prop="name" label="用户" width="200"></el-table-column>
           <el-table-column prop="time" label="发布时间" width="200" sortable></el-table-column>
           <el-table-column prop="comment" label="评论内容"></el-table-column>
+          <el-table-column label="操作" width="200px">
+            <template slot-scope="scope">
+              <div v-if="identityCheck(scope.row.studentId)">
+                <el-button size="mini" type="primary" @click="editComment(scope.$index, scope.row)">编辑</el-button>
+                <el-button size="mini" type="danger" @click="deleteComment(scope.$index, scope.row)">删除</el-button>
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
@@ -77,6 +85,7 @@
 </template>
 
 <script>
+import { getCurrentTime } from '../assets/constants'
 export default {
   name: 'itemDetail',
   data() {
@@ -117,6 +126,51 @@ export default {
     }
   },
   methods: {
+    editComment(index,row){
+      this.$prompt('年轻人，请输入你的评论', '来评', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputType:'textarea',
+          inputValue:row.comment,
+          inputValidator: (val) => {
+            if (val.length < 3 || val.length > 200) return '最少输入3个字，最长输入200个字！你输入了'+val.length+'个字'
+          },
+        }).then(({ value }) => {
+          this.$axios.post('/student/modify_comment',{
+            commentID:row.commentId,
+            content:value,
+            time:getCurrentTime()
+            }).then(res=>{
+              if(eval(res.data)['is_success'] == 'true'){
+                this.$message({message:'修改成功！',type:'success',center:true,showClose:true})
+              }else{
+                  this.$notify.error({title: '添加评论失败',message: eval(res.data)['description']})                
+              }
+            }).catch(failResponse => {
+              this.$notify.error({title: '修改评论异常！',message: failResponse.message});
+            })
+        })
+    },
+    deleteComment(index,row){
+        this.$confirm('删除后订单的“已评论”状态将不会回滚至可添加评论的“已收货”状态，确定删除这条评论吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$axios.post('/student/delete_comment',{commentID:row.commentId,}).then(res=>{
+            if(eval(res.data)['is_success'] == 'true'){
+                this.$message({message:'删除成功！',type:'success',center:true,showClose:true})
+            }else{
+                this.$notify.error({title: '删除评论失败',message: eval(res.data)['description']})                
+            }
+          })
+        }).catch(failResponse => {
+            this.$notify.error({title: '删除评论异常！',message: failResponse.message});
+        })
+    },
+    identityCheck(id){
+      return id == window.sessionStorage.getItem('user')
+    },
     addToCart() {
       console.log(this.stuID)
       console.log(this.bookMsg.id)
@@ -126,12 +180,14 @@ export default {
           commodityID: this.bookMsg.id,
         })
         .then((resp) => {
-          console.log(resp)
-          if (resp && resp.status === 200) {
-            this.books = resp.data
+          if (eval(resp.data)['is_success'] === 'true') {
+            this.$message({message:'添加成功！',type:'success',center:true,showClose:true})
+          }else{
+            this.$notify.error({title: '添加失败！',message: eval(resp.data)['description']});
           }
+        }).catch(err=>{
+          this.$notify.error({title: '添加异常！',message: err.message});
         })
-      alert('添加到购物车！')
     },
     handleEnlarge(dir){
       console.log(dir);
@@ -171,7 +227,8 @@ export default {
           this.stuID = window.sessionStorage.getItem('user')
         }
       }).catch(failResponse => {
-        this.$notify.error({title: '拉取商品信息失败',message: failResponse.data});
+        console.log(failResponse)
+        this.$notify.error({title: '拉取商品信息失败',message: failResponse});
       })
     this.$axios.post('/commodity/get_comments',{commodityID:this.bookMsg.id}).then(res=>{
       this.comments.length = 0;
@@ -179,6 +236,8 @@ export default {
         const element = res.data[index];
         console.log(element)
         this.comments.push({
+          commentId: element.id,
+          studentId: element.student.studentId,
           name: element.student.name,
           comment: element.content,
           time: element.time,

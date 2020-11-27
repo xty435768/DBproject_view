@@ -79,7 +79,7 @@
                         console.log(resp.data)
                     }
                 }).catch(failResponse => {
-                    this.$notify.error({title: '拉去商品信息失败',message: failResponse.data});
+                    this.$notify.error({title: '拉取商品信息失败',message: failResponse.data});
                 })
             },
             handleCurrentChange(currentPage) {

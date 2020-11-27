@@ -3,7 +3,7 @@
     <div width="100%">
       <el-table :data="soldBooks" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="45"> </el-table-column> -->
-        <el-table-column type="index" label="#"></el-table-column>
+        <el-table-column prop="transactionID" label="ID" width="70px"></el-table-column>
         <el-table-column label="商品名称">
           <template slot-scope="scope">
             <div>
@@ -21,15 +21,21 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="订单价格" prop="order_price" sortable></el-table-column>
+        <el-table-column label="订单价格" prop="order_price" sortable width="120px"></el-table-column>
         <el-table-column label="买家">
+          
           <template slot-scope="scope">
-            <div>姓名: {{ soldBooks[scope.$index].buyer_name }}</div>
-            <div>电话: {{ soldBooks[scope.$index].buyer_mobile }}</div>
+            <el-tooltip placement="right" content="Top Left 提示文字">
+              <p slot="content" style="font-size: 14px;">昵称：{{ soldBooks[scope.$index].buyer_name }}</p>
+              <p slot="content" style="font-size: 14px;">电话: {{ soldBooks[scope.$index].buyer_mobile }}</p>
+              <p slot="content" style="font-size: 14px;">QQ: {{ soldBooks[scope.$index].buyer_qq }}</p>
+              <div>{{ soldBooks[scope.$index].buyer_name }}</div>
+            </el-tooltip>
           </template>
+          
         </el-table-column>
         <el-table-column prop="order_time" label="发布时间" sortable></el-table-column>
-        <el-table-column label="货物状态" prop="if_get_book">
+        <el-table-column label="货物状态" prop="if_get_book" width="100px">
           <template slot-scope="scope">
             <el-tag type="danger" v-if="scope.row.if_get_book == '已下单'">未发货</el-tag>
             <el-tag type="primary" v-if="scope.row.if_get_book == '已发货'">已发货</el-tag>
@@ -92,9 +98,10 @@ export default {
         .then((resp) => {
           console.log('showing orders')
           console.log(resp.data)
-          if (resp && resp.status === 200) {
+          if (eval(resp.data)['is_success']=='true') {
+            this.orderList[index].if_get_book = '已收货'
           } else {
-            console.log('err')
+            this.$notify.error({title: '状态更新失败',message: eval(resp.data)['description']})
           }
         })
     },
@@ -114,28 +121,27 @@ export default {
                 .post('/commodity/get_transaction', {
                   commodityID: resp.data[i].id,
                 })
-                .then((resp) => {
-                  // console.log(resp)
-                  if (resp && resp.status === 200) {
-                    if (resp.data.length > 3) {
-                      //console.log(resp.data.length)
-                      var trans_data = eval(resp.data)
-                      console.log(trans_data[0])
-                      this.soldBooks.push({
-                        bookName: trans_data[0].commodity.name,
-                        order_price: trans_data[0].commodity.price,
-                        order_time: trans_data[0].currentStatus.time,
-                        buyer_name: trans_data[0].student.name,
-                        buyer_mobile: trans_data[0].student.mobile,
-                        if_get_book: trans_data[0].currentStatus.status,
-                        transactionID: trans_data[0].id,
+                .then(response => {
+                  var trans_data = eval(response.data)
+                  for (let i = 0; i < trans_data.length; i++) {
+                    this.soldBooks.push({
+                        bookID: trans_data[i].commodity.id,
+                        bookName: trans_data[i].commodity.name,
+                        order_price: trans_data[i].commodity.price,
+                        order_time: trans_data[i].currentStatus.time,
+                        buyer_name: trans_data[i].student.name,
+                        buyer_mobile: trans_data[i].student.mobile,
+                        buyer_qq: trans_data[i].student.qq,
+                        if_get_book: trans_data[i].currentStatus.status,
+                        transactionID: trans_data[i].id,
                       })
-                    }
                   }
                 })
             }
           }
-        })
+        }).catch(failResponse => {
+            this.$notify.error({title: '获取售出订单失败',message: failResponse.data})
+      });
     },
   },
 

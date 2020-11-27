@@ -8,19 +8,19 @@
       <el-form-item label="学号" align="left" style="margin-bottom:22px">
         <el-tag>{{ userid_display }}</el-tag>
       </el-form-item>
-      <el-form-item label="学院" align="left" style="margin-bottom:22px">
+      <el-form-item label="学院" align="left" style="margin-bottom:22px" v-if="user_type == 'user'">
         <el-select v-model="user_info_form.department" filterable placeholder="请选择所在学院" style="width: 370px;">
           <el-option v-for="item in department_options" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="手机号" align="left" style="margin-bottom:22px">
+      <el-form-item label="手机号" align="left" style="margin-bottom:22px" v-if="user_type == 'user'">
         <el-tag>{{ user_mobile_display }}</el-tag>
         <el-button @click="dialog_visible = true">修改手机</el-button>
       </el-form-item>
-      <el-form-item label="宿舍" align="left" style="margin-bottom:22px">
+      <el-form-item label="宿舍" align="left" style="margin-bottom:22px" v-if="user_type == 'user'">
         <el-input v-model="user_info_form.dormitory" placeholder="请输入宿舍号"></el-input>
       </el-form-item>
-      <el-form-item label="专业" align="left" style="margin-bottom:22px">
+      <el-form-item label="专业" align="left" style="margin-bottom:22px" v-if="user_type == 'user'">
         <el-input v-model="user_info_form.major" placeholder="请输入所在专业"></el-input>
       </el-form-item>
       <el-form-item label="昵称" align="left" style="margin-bottom:22px">
@@ -30,7 +30,7 @@
         <el-radio v-model="user_info_form.sex" label="male">男</el-radio>
         <el-radio v-model="user_info_form.sex" label="female">女</el-radio>
       </el-form-item>
-      <el-form-item label="QQ号" align="left" style="margin-bottom:22px">
+      <el-form-item label="QQ号" align="left" style="margin-bottom:22px" v-if="user_type == 'user'">
         <el-input v-model="user_info_form.qq" placeholder="请输入QQ号"></el-input>
       </el-form-item>
       <el-form-item>
@@ -78,6 +78,7 @@ export default {
   data() {
     return {
       userid_display: 'null',
+      user_type:'null',
       user_mobile_display: 'null',
       department_options: department_options,
       user_info_form: {
@@ -163,7 +164,8 @@ export default {
     modify_information() {
       this.$axios
         .post('/user_info/set', {
-          studentID: window.sessionStorage.getItem('user'),
+          userID: window.sessionStorage.getItem('user'),
+          userType: window.sessionStorage.getItem('user_type'),
           name: this.user_info_form.name,
           sex: this.user_info_form.sex,
           college: this.user_info_form.department,
@@ -175,6 +177,7 @@ export default {
           var d = eval(res.data)
           if (d['is_success'] === 'true') {
             this.$message({ message: '修改成功！', type: 'success', center: true, showClose: true })
+            
           } else {
             this.$message({ message: '修改失败', type: 'error', center: true, showClose: true })
           }
@@ -243,12 +246,13 @@ export default {
   },
   mounted() {
     this.userid_display = window.sessionStorage.getItem('user')
+    this.user_type = window.sessionStorage.getItem('user_type')
     this.$axios
-      .post('/user_info/get', { studentID: window.sessionStorage.getItem('user') })
+      .post('/user_info/get', { userID: window.sessionStorage.getItem('user'), userType: window.sessionStorage.getItem('user_type') })
       .then((res) => {
         var d = eval(res.data)
         if (d['is_success'] === 'true') {
-          this.user_mobile_display = d['mobile'].substr(0, 2) + '******' + d['mobile'].substr(8)
+          this.user_mobile_display = d['mobile']?(d['mobile'].substr(0, 2) + '******' + d['mobile'].substr(8)):''
           this.user_info_form.name = d['name']
           this.user_info_form.sex = d['sex']
           this.user_info_form.department = d['college']
@@ -260,7 +264,7 @@ export default {
         }
       })
       .catch((failResponse) => {
-        this.$notify.error({ title: '调取用户信息异常！', message: failResponse.data })
+        this.$notify.error({ title: '调取用户信息异常！', message: failResponse.message })
       })
   },
 }
