@@ -21,7 +21,13 @@
         name: 'NavMenu',
         created(){
             if(sessionStorage.getItem('user_type') === 'admin'){
-                this.navList.push({name: '/admin/items', navItem: '商城管理员'})
+                this.navList = [
+                    {name: '/index', navItem: '首页'},
+                    {name: '/market', navItem: '校园商城'},
+                    {name: '/user/info', navItem: '个人中心'},
+                    {name: '/admin/items', navItem: '商城管理员'}
+                    //{name; '/user/info',}
+                ];
             }
         },
         data () {
@@ -29,7 +35,6 @@
                 
                 navList: [
                     {name: '/index', navItem: '首页'},
-                    
                     {name: '/market', navItem: '校园商城'},
                     {name: '/release', navItem: '发布新商品'},
                     {name: '/user/info', navItem: '个人中心'}

@@ -11,12 +11,12 @@
               :to="{
                 path: '/itemDetail',
                 query: {
-                  id: scope.row.bookID,
+                  id: scope.row.itemID,
                 },
               }"
               
             >
-              {{ orderList[scope.$index].book_name }}
+              {{ orderList[scope.$index].item_name }}
             </router-link>
           </div>
         </template>
@@ -26,16 +26,16 @@
         prop="order_price"
         sortable
       ></el-table-column>
-      <el-table-column label="联系方式" prop="mobile"></el-table-column>
+      <el-table-column label="联系方式">
+        <template slot-scope="scope">
+          手机：{{scope.row.mobile}}<br/>QQ：{{scope.row.qq}}
+        </template>
+      </el-table-column>
 
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-            >删除</el-button
-          >
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" >删除</el-button>
+          <el-button size="mini" :type="(scope.row.description.length == 0)?'info':'primary'" @click="handleEditDescription(scope.$index, scope.row)" >{{(scope.row.description.length == 0)?'添加':'修改'}}备注</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -51,21 +51,14 @@
         >去结算<i class="el-icon-upload el-icon--right"></i
       ></el-button>
     </div>
-    <!-- <Index class="cart-area" ref="cartArea"></Index>
-    <Order></Order> -->
   </div>
 </template>
 
 <script>
-import Index from "./Index";
-import Order from "./temp";
+
 import { getCurrentTime } from "../../assets/constants.js";
 export default {
   name: "cart",
-  components: {
-    Index,
-    Order,
-  },
   data() {
     return {
       // 订单查询对象
@@ -89,17 +82,14 @@ export default {
     this.getOrderList();
   },
   methods: {
-    delete_book_in_market(){
-
-    },
     uploadOrder(index) {
       this.$axios
         .post("/transaction/create", {
-          commodityID: this.orderList[index].bookID,
+          commodityID: this.orderList[index].itemID,
           studentID: window.sessionStorage.getItem("user"),
           time: getCurrentTime(),
           status: "已下单",
-          description: "",
+          description: this.orderList[index].description,
         })
         .then((resp) => {
           console.log("creating new order");
@@ -120,6 +110,21 @@ export default {
           if (resp && resp.status === 200) {
             console.log("delete success");
           }
+        });
+    },
+    handleEditDescription(index, row){
+      this.$prompt('可以在这里写一些备注给卖家看哦', '添加订单备注', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPlaceholder:'在C12楼下交易可以吗？',
+          inputValue: row.description,
+          inputValidator: (val) => {
+            if (val.length > 50) return '最长输入50个字！你输入了'+val.length+'个字'
+          },
+        }).then(({value}) => {
+          row.description = value;
+        }).catch(() => {
+          console.log('取消添加备注');
         });
     },
     handleDelete(index, row) {
@@ -196,11 +201,13 @@ export default {
           if (resp && resp.status === 200) {
             for (var i = 0; i < resp.data.length; i++) {
               this.orderList.push({
-                book_name: resp.data[i].commodity.name,
+                item_name: resp.data[i].commodity.name,
                 order_price: resp.data[i].commodity.price,
                 mobile: resp.data[i].commodity.student.mobile,
                 cartID: resp.data[i].id,
-                bookID: resp.data[i].commodity.id,
+                itemID: resp.data[i].commodity.id,
+                qq: resp.data[i].commodity.student.qq,
+                description: '',
                 position: i,
               });
             }

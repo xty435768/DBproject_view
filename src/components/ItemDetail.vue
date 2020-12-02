@@ -1,26 +1,26 @@
 <template>
   <el-container>
     <el-header height="60px">
-      <router-link class="spanTitle" to="/index" target="_blank">
+      <router-link class="spanTitle" to="/index" target="_self">
         South China University of Technology Commercial Platform
       </router-link>
     </el-header>
     <el-main class="el-main" v-if="idIsValid">
       <div style=" margin-top: 30px;">
         <div style="margin-left: 200px; float: left;">
-          <div class="col-left" @click="handleEnlarge(bookMsg.cover)">
-            <img :src="bookMsg.cover" class="img-title" style="width: 300px;" />
+          <div class="col-left" @click="handleEnlarge(itemMsg.cover)">
+            <img :src="itemMsg.cover" class="img-title" style="width: 300px;" />
           </div>
         </div>
         <div class="col-main">
           <div class="div-msg" style="width:300px">
-            商品名：<span style="color: #d6524a;">{{ bookMsg.name }}</span>
+            商品名：<span style="color: #d6524a;">{{ itemMsg.name }}</span>
           </div>
           <div class="div-msg" style="width:300px">
-            价格：<span style="color: #ff4400;font-size:26px">{{ bookMsg.price }}</span>
+            价格：<span style="color: #ff4400;font-size:26px">{{ itemMsg.price }}</span>
           </div>
-          <div class="div-msg" style="width:300px">发布者：{{ bookMsg.stuName }}</div>
-          <div class="div-msg" style="width:300px">联系方式（QQ号）：{{ bookMsg.qq }}</div>
+          <div class="div-msg" style="width:300px">发布者：{{ itemMsg.stuName }}</div>
+          <div class="div-msg" style="width:300px">联系方式（QQ号）：{{ itemMsg.qq }}</div>
 
           <div class=" div-msg">
             <el-button type="primary" style="width: 150px;height: 50px;" @click="addToCart">添加到购物车</el-button>
@@ -32,17 +32,17 @@
       <div class="msgTitle">
         详情描述
       </div>
-      <div class="abs" v-html="bookMsg.abs"></div>
+      <div class="abs" v-html="itemMsg.abs"></div>
       <div class="msgTitle">
         详细图片
       </div>
 
       <div id="box">
-        <!-- <div style="margin: 20px;" v-for="(img, index) in bookMsg.imgs" :key="index">
+        <!-- <div style="margin: 20px;" v-for="(img, index) in itemMsg.imgs" :key="index">
           <img float:left style=" width:60px;" :src="img.dir" />
         </div> -->
         <ul>
-          <li v-for="(img, index) in bookMsg.imgs" :key="index" @click="handleEnlarge(img.dir)" >
+          <li v-for="(img, index) in itemMsg.imgs" :key="index" @click="handleEnlarge(img.dir)" >
             <img :src="img.dir" alt=""  />
           </li>
         </ul>
@@ -92,10 +92,10 @@ export default {
     return {
       isEnlargeImage:false,
       enlargeImage:'',
-      bookInfo: [],
+      itemInfo: [],
       stuID: '',
       idIsValid: false,
-      bookMsg: {
+      itemMsg: {
         id: '',
         name: '',
         price: '',
@@ -107,21 +107,7 @@ export default {
         
       },
       comments: [
-        {
-          name: 'Lana Del Rey',
-          comment: '我发布一张新专辑Norman Fucking Rockwell,大家快来听啊',
-          time: '2019年9月16日 18:43',
-        },
-        {
-          name: 'Taylor Swift',
-          comment: '我发行了我的新专辑Lover',
-          time: '2019年9月16日 18:43',
-        },
-        {
-          name: 'Norman Fucking Rockwell',
-          comment: 'Plz buy Norman Fucking Rockwell on everywhere',
-          time: '2019年9月16日 18:43',
-        },
+        
       ],
     }
   },
@@ -142,7 +128,7 @@ export default {
             time:getCurrentTime()
             }).then(res=>{
               if(eval(res.data)['is_success'] == 'true'){
-                this.$message({message:'修改成功！',type:'success',center:true,showClose:true})
+                this.$message({message:'修改成功！请刷新页面后查看修改后评论',type:'success',center:true,showClose:true})
               }else{
                   this.$notify.error({title: '添加评论失败',message: eval(res.data)['description']})                
               }
@@ -163,9 +149,9 @@ export default {
             }else{
                 this.$notify.error({title: '删除评论失败',message: eval(res.data)['description']})                
             }
-          })
-        }).catch(failResponse => {
+          }).catch(failResponse => {
             this.$notify.error({title: '删除评论异常！',message: failResponse.message});
+          })
         })
     },
     identityCheck(id){
@@ -173,11 +159,15 @@ export default {
     },
     addToCart() {
       console.log(this.stuID)
-      console.log(this.bookMsg.id)
+      console.log(this.itemMsg.id)
+      if(window.sessionStorage.getItem('user_type') === 'admin'){
+        this.$notify.error({title: '添加失败！',message: '管理员不能添加商品到购物车，请使用学生账号！'});
+        return
+      }
       this.$axios
         .post('/student/add_cart', {
           studentID: this.stuID,
-          commodityID: this.bookMsg.id,
+          commodityID: this.itemMsg.id,
         })
         .then((resp) => {
           if (eval(resp.data)['is_success'] === 'true') {
@@ -201,12 +191,12 @@ export default {
   created() {
     console.log('item created')
     console.log(this.$route.query)
-    this.bookMsg.id = this.$route.query.id
+    this.itemMsg.id = this.$route.query.id
   },
   mounted() {
     this.$axios
       .post('/commodity/get', {
-        commodityID: this.bookMsg.id,
+        commodityID: this.itemMsg.id,
       })
       .then((resp) => {
         console.log(resp)
@@ -217,20 +207,20 @@ export default {
             return;
           }
           this.idIsValid = true;
-          this.bookMsg.name = resp.data.name
-          this.bookMsg.cover = resp.data.cover.dir
-          this.bookMsg.price = resp.data.price
-          this.bookMsg.abs = resp.data.description.replaceAll("\n","<br>");
-          this.bookMsg.imgs = resp.data.pictures
-          this.bookMsg.qq = resp.data.student.qq
-          this.bookMsg.stuName = resp.data.student.name
+          this.itemMsg.name = resp.data.name
+          this.itemMsg.cover = resp.data.cover.dir
+          this.itemMsg.price = resp.data.price
+          this.itemMsg.abs = resp.data.description.replaceAll("\n","<br>");
+          this.itemMsg.imgs = resp.data.pictures
+          this.itemMsg.qq = resp.data.student.qq
+          this.itemMsg.stuName = resp.data.student.name
           this.stuID = window.sessionStorage.getItem('user')
         }
       }).catch(failResponse => {
         console.log(failResponse)
         this.$notify.error({title: '拉取商品信息失败',message: failResponse});
       })
-    this.$axios.post('/commodity/get_comments',{commodityID:this.bookMsg.id}).then(res=>{
+    this.$axios.post('/commodity/get_comments',{commodityID:this.itemMsg.id}).then(res=>{
       this.comments.length = 0;
       for (let index = 0; index < res.data.length; index++) {
         const element = res.data[index];

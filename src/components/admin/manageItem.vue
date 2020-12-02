@@ -1,17 +1,17 @@
 <template>
     <div>
-        <Books books style="width:1150px" ref="booksArea"
+        <Items items style="width:1150px" ref="itemsArea"
             :dataSourceAPI="'/commodity/get_all'"
-            :showEdit="false"></Books>
+            :showEdit="false"></Items>
     </div>
 </template>
 
 <script>
-import Books from '../user/Books.vue'
+import Items from '../user/Items.vue'
 export default {
     name: 'admin_item',
     components: {
-        Books,
+        Items,
     }
 }
 </script>

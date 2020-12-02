@@ -34,9 +34,10 @@
         <el-input v-model="user_info_form.qq" placeholder="请输入QQ号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-tooltip class="item" effect="dark" content="只能修改学院、宿舍、专业、昵称、性别和QQ号嗷 ₍ ᐢ.⌄.ᐢ ₎ ꜆˖.♡" placement="bottom">
+        <el-tooltip class="item" effect="dark" content="只能修改学院、宿舍、专业、昵称、性别和QQ号嗷 ₍ ᐢ.⌄.ᐢ ₎ ꜆˖.♡" v-if="isUser" placement="bottom">
           <el-button style="width: 100%;" @click="modify_information" type="primary">修改信息</el-button>
         </el-tooltip>
+        <el-button style="width: 100%;" @click="modify_information" type="primary" v-if="!isUser">修改信息</el-button>
       </el-form-item>
     </el-form>
     <el-dialog title="修改手机" :visible.sync="dialog_visible" width="40%">
@@ -103,6 +104,9 @@ export default {
       disabled: false,
       time: 0,
       btntxt: '重新发送',
+
+      //判断是用户还是管理员
+      isUser: false,
     }
   },
   methods: {
@@ -266,6 +270,9 @@ export default {
       .catch((failResponse) => {
         this.$notify.error({ title: '调取用户信息异常！', message: failResponse.message })
       })
+    
+    //判断是用户还是管理员
+    this.isUser = window.sessionStorage.getItem('user_type') === 'user';
   },
 }
 </script>

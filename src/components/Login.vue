@@ -304,6 +304,7 @@
         {
           this.$axios.post('/user_info/set', 
             {
+              userType:'user',
               studentID:this.basicSignUpForm.id,
               name:this.additionForm.name,
               sex:this.additionForm.sex,

@@ -4,7 +4,7 @@
         <el-row style="height: 550px;margin: 40px 40px auto 40px">
             <!-- <search-bar @onSearch="searchResult" ref="searchBar"></search-bar> -->
             <el-tooltip effect="dark" placement="right"
-                        v-for="item in books.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+                        v-for="item in items.slice((currentPage-1)*pageSize,currentPage*pageSize)"
                         :key="item.id">
                 <p slot="content" style="font-size: 14px;margin-bottom: 6px;">{{item.name}}</p>
                 <p slot="content" style="font-size: 13px;margin-bottom: 6px">
@@ -13,11 +13,11 @@
                     <span>{{item.price}}元</span>
                 </p>
 
-                <el-card style="width: 135px;margin-bottom: 20px;height: 233px;float: left;margin-right: 15px" class="book"
+                <el-card style="width: 135px;margin-bottom: 20px;height: 233px;float: left;margin-right: 15px" class="item"
                          bodyStyle="padding:10px" shadow="hover">
                     <router-link target="_blank" :to="{
                     path:'/itemDetail',
-                    query:{id:item.id}}" class="cover" @click.native="sendBookMsg(item)">
+                    query:{id:item.id}}" class="cover" @click.native="sendItemMsg(item)">
                     <!-- <router-link to="/itemDetail"> -->
                         <img :src="item.cover.dir" alt="封面">
                     </router-link>
@@ -36,7 +36,7 @@
                     @current-change="handleCurrentChange"
                     :current-page="currentPage"
                     :page-size="pageSize"
-                    :total="books.length">
+                    :total="items.length">
             </el-pagination>
         </el-row>
     </div>
@@ -47,21 +47,21 @@
     //import SearchBar from './SearchBar'
     //引入公共组件Bus，方便组件之间传递信息
     export default {
-        name: 'Books',
+        name: 'Items',
         // components: {
         //     SearchBar
         // },
         data () {
             return {
-                books: [],
+                items: [],
                 currentPage: 1,
                 pageSize: 18,
-                BookMsg:'BookMsg',
+                ItemMsg:'ItemMsg',
             }
         },
         //挂载数据后执行
         mounted(){
-            this.loadBooks();
+            this.loadItems();
             this.$bus.on("changeCurrentPage",(val)=>{
                 this.currentPage=val;
             });
@@ -71,11 +71,11 @@
         },
 
         methods: {
-            loadBooks () {
+            loadItems () {
                 this.$axios.post('/commodity/get_all',{})
                     .then(resp => {
                     if (resp && resp.status === 200) {
-                        this.books = resp.data
+                        this.items = resp.data
                         console.log(resp.data)
                     }
                 }).catch(failResponse => {
@@ -94,12 +94,12 @@
                     }
                     }).then(resp => {
                     if (resp && resp.status === 200) {
-                        this.books = resp.data
+                        this.items = resp.data
                     }
                 })
             },
-            sendBookMsg(item){
-                this.$bus.emit("bookMsg",item.title);
+            sendItemMsg(item){
+                this.$bus.emit("itemMsg",item.title);
             }
         }
     }
