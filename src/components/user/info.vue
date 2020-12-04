@@ -71,7 +71,7 @@
 <script>
 // import UploadPictureList from '../common/UploadPictureList.vue'
 import { department_options } from '../../assets/constants.js'
-import Vcode from 'vue-puzzle-vcode'
+import Vcode from '../common/PuzzleVcode';
 export default {
   //   components: { UploadPictureList, Vcode },
   components: { Vcode },

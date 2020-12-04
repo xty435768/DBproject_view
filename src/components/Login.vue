@@ -113,7 +113,7 @@
 
 
 <script>
-  import Vcode from 'vue-puzzle-vcode';
+  import Vcode from './common/PuzzleVcode';
   import PasswordStrength from "./common/PasswordStrengthCheck";
   import UploadPicture from "./common/UploadPicture";
   import {department_options} from "../assets/constants.js"
@@ -305,14 +305,14 @@
           this.$axios.post('/user_info/set', 
             {
               userType:'user',
-              studentID:this.basicSignUpForm.id,
+              userID:this.basicSignUpForm.id,
               name:this.additionForm.name,
               sex:this.additionForm.sex,
               mobile:this.basicSignUpForm.mobile,
               college:this.basicSignUpForm.department,
               dormitory:this.additionForm.dormitory,
               qq:this.additionForm.qq_number,
-              major:this.additionForm.major,              
+              major:this.additionForm.major,          
             })
               .then(successResponse => {
                 if (eval(successResponse.data)['is_success'] === 'true') {
@@ -341,7 +341,9 @@
         //alert("success!");
         this.AI_check = false;
         this.vcode_isShow=false;
-        console.log(this.basicSignUpForm.mobile);
+        this.disabled = true;
+        this.$message({message: '正在发送短信，请稍后',type: 'info',center:true})
+        //console.log(this.basicSignUpForm.mobile);
 
         this.$axios
           .post('/common/sendsms', {

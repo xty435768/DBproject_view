@@ -33,8 +33,19 @@ module.exports = (options = {}) => ({
       },
       {
         test: /\.js$/,
-        use: ['babel-loader'],
+        //use: ['babel-loader'],
+        loader: 'babel-loader',
+        //exclude: /node_modules/,
+        include: [
+          //resolve('node_modules/_vue-puzzle-vcode@1.1.4@vue-puzzle-vcode/dist/'),
+          resolve('src')
+        ]
+      },
+      {
+        test: /\.js$/,
         exclude: /node_modules/,
+        loader: "babel-loader"
+  
       },
       {
         test: /\.css$/,
